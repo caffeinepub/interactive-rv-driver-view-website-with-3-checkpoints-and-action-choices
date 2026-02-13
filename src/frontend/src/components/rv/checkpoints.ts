@@ -41,11 +41,11 @@ export const checkpoints: CheckpointData[] = [
         consumption: 8
       },
       {
-        id: 'stretch',
-        label: 'Stretch Legs',
-        description: 'Take a walk and get some fresh air',
-        icon: '🚶',
-        consumption: 5
+        id: 'rinse',
+        label: 'Rinse Containers',
+        description: 'Clean your travel mugs and bottles',
+        icon: '🧴',
+        consumption: 10
       }
     ]
   },
@@ -76,11 +76,11 @@ export const checkpoints: CheckpointData[] = [
         consumption: 10
       },
       {
-        id: 'photo',
-        label: 'Take Photos',
-        description: 'Capture the stunning views',
-        icon: '📸',
-        consumption: 6
+        id: 'wipe',
+        label: 'Wipe Surfaces',
+        description: 'Clean counters and tables',
+        icon: '🧽',
+        consumption: 8
       }
     ]
   },
@@ -111,11 +111,11 @@ export const checkpoints: CheckpointData[] = [
         consumption: 22
       },
       {
-        id: 'hookup',
-        label: 'Connect Utilities',
-        description: 'Hook up power and connections',
-        icon: '🔌',
-        consumption: 8
+        id: 'laundry',
+        label: 'Quick Laundry',
+        description: 'Rinse a few essentials',
+        icon: '👕',
+        consumption: 15
       }
     ]
   }

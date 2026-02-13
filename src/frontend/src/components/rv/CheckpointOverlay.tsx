@@ -19,8 +19,8 @@ export function CheckpointOverlay({
   onToggleAction, 
   onContinue 
 }: CheckpointOverlayProps) {
-  const canContinue = selectedActions.size >= 1 && selectedActions.size <= 2;
-  const remainingSelections = Math.max(0, 1 - selectedActions.size);
+  const canContinue = selectedActions.size === 2;
+  const remainingSelections = Math.max(0, 2 - selectedActions.size);
 
   return (
     <div className="absolute inset-0 z-20 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
@@ -41,7 +41,7 @@ export function CheckpointOverlay({
         
         <CardContent className="space-y-3">
           <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mb-4">
-            <p>Choose 1 or 2 activities to continue</p>
+            <p>Choose 2 activities to continue</p>
             {selectionLimitReached && (
               <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
                 <AlertCircle className="w-4 h-4" />

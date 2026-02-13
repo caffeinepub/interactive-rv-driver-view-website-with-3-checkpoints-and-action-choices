@@ -2,8 +2,8 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-fix-the-missing-traveling-video-scenery-during-travel-segments-so-that-users-always-see-either-a-the-rv-front-view-traveling-video-or-b-a-reliable-visual-fallback-if-the-video-cannot-be-loaded-played",
-      "featureTitle": "Fix the missing traveling video/scenery during travel segments so that users always see either (a) the RV front-view traveling video or (b) a reliable visual fallback if the video cannot be loaded/played.",
+      "featureId": "feature-change-the-traveling-segments-so-that-reaching-a-checkpoint-and-showing-the-checkpoint-activity-overlay-is-triggered-by-a-user-click-tap-anywhere-on-the-journey-traveling-screen-rather-than-by-an-elapsed-time-timer-based-trigger",
+      "featureTitle": "Change the traveling segments so that reaching a checkpoint (and showing the checkpoint activity overlay) is triggered by a user click/tap anywhere on the journey/traveling screen, rather than by an elapsed-time/timer-based trigger.",
       "files": [
         "frontend/src/components/rv/RVExperience.tsx",
         "frontend/src/components/rv/TravelVideoScene.tsx"
@@ -16,15 +16,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-12"
+        "REQ-23"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-checkpoint-activity-options-so-the-actions-are-mostly-water-related-tasks-e-g-cooking-cleaning-freshen-up-grab-coffee-tea-refreshments-while-keeping-the-existing-1-2-selection-rule-and-the-hidden-internal-consumption-mechanic",
-      "featureTitle": "Update the checkpoint activity options so the actions are mostly water-related tasks (e.g., cooking, cleaning, freshen up, grab coffee/tea, refreshments), while keeping the existing 1–2 selection rule and the hidden internal consumption mechanic.",
+      "featureId": "feature-update-travelvideoscene-to-support-click-to-advance-behavior-by-removing-neutralizing-its-travel-duration-timer-logic-for-checkpoint-arrival-while-keeping-video-playback-health-monitoring-and-animated-fallback-scenery-intact",
+      "featureTitle": "Update TravelVideoScene to support click-to-advance behavior by removing/neutralizing its travel-duration timer logic for checkpoint arrival (while keeping video playback health monitoring and animated fallback scenery intact).",
       "files": [
-        "frontend/src/components/rv/checkpoints.ts"
+        "frontend/src/components/rv/TravelVideoScene.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -34,38 +34,16 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-13"
+        "REQ-24"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-after-the-user-completes-the-3rd-checkpoint-s-action-playback-force-the-journey-to-come-to-a-halt-due-to-an-unidentified-issue-present-a-user-action-labeled-issue-resolved-and-only-resume-the-journey-after-the-user-clicks-it",
-      "featureTitle": "After the user completes the 3rd checkpoint’s action playback, force the journey to come to a halt due to an unidentified issue; present a user action labeled \"Issue resolved\" and only resume the journey after the user clicks it.",
-      "files": [
-        "frontend/src/components/rv/JourneyHaltIssueOverlay.tsx",
-        "frontend/src/components/rv/ProgressIndicator.tsx",
-        "frontend/src/components/rv/RVExperience.tsx",
-        "frontend/src/hooks/useRVFlow.ts"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-14"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-after-the-user-clicks-issue-resolved-continue-the-journey-to-a-final-destination-scene-where-there-is-a-campfire-and-then-show-the-end-of-journey-completion-ui",
-      "featureTitle": "After the user clicks \"Issue resolved\", continue the journey to a final destination scene where there is a campfire, and then show the end-of-journey completion UI.",
+      "featureId": "feature-update-rvexperience-to-wire-the-new-click-to-advance-trigger-from-the-traveling-view-to-the-existing-startcheckpoint-segment-logic-and-ensure-the-timed-travelduration-ontraveltimereached-path-is-no-longer-used-for-checkpoints",
+      "featureTitle": "Update RVExperience to wire the new click-to-advance trigger from the traveling view to the existing startCheckpoint(segment) logic (and ensure the timed travelDuration/onTravelTimeReached path is no longer used for checkpoints).",
       "files": [
         "frontend/src/components/rv/RVExperience.tsx",
-        "frontend/src/components/rv/scenes.ts",
-        "frontend/src/hooks/useRVFlow.ts"
+        "frontend/src/components/rv/TravelVideoScene.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -75,7 +53,25 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-15"
+        "REQ-25"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-adjust-user-facing-on-screen-guidance-text-during-traveling-to-reflect-click-to-advance-english-only",
+      "featureTitle": "Adjust user-facing on-screen guidance text during traveling to reflect click-to-advance (English only).",
+      "files": [
+        "frontend/src/components/rv/TravelVideoScene.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-26"
       ],
       "confidence": "high"
     }

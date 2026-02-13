@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRVFlow } from '../../hooks/useRVFlow';
 import { StartJourneyScreen } from './StartJourneyScreen';
 import { TravelVideoScene } from './TravelVideoScene';
@@ -20,6 +20,7 @@ export function RVExperience() {
     toggleAction, 
     completeCheckpoint,
     finishPlayback,
+    showHaltIssue,
     continueToNextSegment,
     resolveIssue,
     arriveAtDestination,
@@ -27,12 +28,15 @@ export function RVExperience() {
     restart 
   } = useRVFlow();
 
-  // Auto-trigger checkpoint arrival after traveling (60 seconds)
+  // Guard to prevent duplicate checkpoint triggers during traveling
+  const isAdvancingRef = useRef(false);
+
+  // Reset advancing guard when leaving traveling state
   useEffect(() => {
-    if (flowState.type === 'traveling') {
-      // Checkpoint will be triggered by TravelVideoScene after 60 seconds
+    if (flowState.type !== 'traveling') {
+      isAdvancingRef.current = false;
     }
-  }, [flowState]);
+  }, [flowState.type]);
 
   // Auto-continue after transition
   useEffect(() => {
@@ -45,12 +49,22 @@ export function RVExperience() {
     }
   }, [flowState, continueToNextSegment]);
 
-  // Auto-arrive at destination after traveling-to-destination (60 seconds)
+  // Delay showing halt-issue overlay by 2-3 seconds after checkpoint 3
   useEffect(() => {
-    if (flowState.type === 'traveling-to-destination') {
-      // Will be triggered by TravelVideoScene after 60 seconds
+    if (flowState.type === 'post-checkpoint-3-delay') {
+      const timer = setTimeout(() => {
+        showHaltIssue();
+      }, 2500); // 2.5 seconds delay
+      
+      return () => clearTimeout(timer);
     }
-  }, [flowState]);
+  }, [flowState, showHaltIssue]);
+
+  const handleUserAdvanceToCheckpoint = (checkpointNumber: number) => {
+    if (isAdvancingRef.current) return;
+    isAdvancingRef.current = true;
+    startCheckpoint(checkpointNumber);
+  };
 
   const renderContent = () => {
     switch (flowState.type) {
@@ -59,12 +73,13 @@ export function RVExperience() {
       }
 
       case 'traveling': {
-        const fallbackImage = scenes[flowState.segment - 1]?.backgroundImage || scenes[0].backgroundImage;
+        // Create unique segment key for resetting TravelVideoScene state
+        const segmentKey = `traveling-segment-${flowState.segment}`;
         return (
           <TravelVideoScene 
-            onTravelTimeReached={() => startCheckpoint(flowState.segment)}
-            travelDuration={60000}
-            fallbackImage={fallbackImage}
+            onUserAdvance={() => handleUserAdvanceToCheckpoint(flowState.segment)}
+            enableTimer={false}
+            segmentKey={segmentKey}
           />
         );
       }
@@ -128,6 +143,17 @@ export function RVExperience() {
         );
       }
 
+      case 'post-checkpoint-3-delay': {
+        // Show checkpoint 3 scene during delay
+        return (
+          <TravelScene 
+            backgroundImage={scenes[2].backgroundImage}
+            title={scenes[2].title}
+            description={scenes[2].description}
+          />
+        );
+      }
+
       case 'halt-issue': {
         return (
           <>
@@ -142,11 +168,14 @@ export function RVExperience() {
       }
 
       case 'traveling-to-destination': {
+        // Create unique segment key for resetting TravelVideoScene state
+        const segmentKey = 'traveling-to-destination';
         return (
           <TravelVideoScene 
             onTravelTimeReached={arriveAtDestination}
+            enableTimer={true}
             travelDuration={60000}
-            fallbackImage={campfireDestinationScene.backgroundImage}
+            segmentKey={segmentKey}
           />
         );
       }

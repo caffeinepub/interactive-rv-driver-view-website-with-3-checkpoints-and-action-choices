@@ -1,18 +1,20 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 7,
-  "summary": "Flutter web app for a first-person RV driver-view journey: user clicks “Start Journey” to begin a traveling video, reaches 3 timed checkpoints (first after ~1 minute), chooses 1–2 water-related activities at each checkpoint, sees an interactive view of selected actions, then continues traveling; after the 3rd checkpoint the journey halts due to an unidentified issue and only resumes after the user clicks “Issue resolved,” continuing to a final destination scene with a campfire; includes a subtle hidden water-consumption mechanic across activities.",
+  "projectStateVersion": 15,
+  "summary": "Flutter web app for a first-person RV driver-view journey: user clicks “Start Journey” to begin travel, reaches 3 checkpoints in order that are triggered by user clicks on the journey screen (not timed), chooses 1–2 water-related activities at each checkpoint, sees an interactive view of selected actions, then continues traveling; after the 3rd checkpoint the journey halts due to an unidentified issue and only resumes after the user clicks “Issue resolved,” continuing to a final destination scene with a campfire; includes a subtle hidden water-consumption mechanic across activities.",
   "architectural_notes": [
     "Implement as Flutter Web.",
     "Travel segments should support video playback with timed checkpoint triggers (elapsed time based).",
     "Add an internal (not overtly exposed) resource system for water consumption tied to activities.",
-    "Add a post-checkpoint-3 interruption state that pauses travel playback until the user acknowledges “Issue resolved,” then resumes toward a final destination scene (campfire)."
+    "Add a post-checkpoint-3 interruption state that pauses travel playback until the user acknowledges “Issue resolved,” then resumes toward a final destination scene (campfire).",
+    "Post-checkpoint-3 interruption should trigger after a short delay (~2–3s) following completion of checkpoint 3 action playback, not immediately.",
+    "Checkpoint progression should be triggered by user click interaction on the journey/travel screen (not by elapsed-time video timers)."
   ],
   "known_issues": [
-    "Traveling video/scenery is missing during travel segments."
+    "Traveling video/scenery is missing during travel segments.",
+    "During road/travel segments, the background is still missing; travel should show animations/video or at least changing images."
   ],
-  "isFixRequest": true,
-  "imageRequirements": "## Required Images\n- Campfire destination scene background, nighttime campsite with visible campfire glow (rv-destination-campfire.dim_1920x1080.png)\n- Unidentified issue halt scene background, roadside stop with hazard/alert mood but no explicit text (rv-journey-halt-issue.dim_1920x1080.png)",
+  "isFixRequest": false,
   "existing_features": [
     {
       "id": "feature-create-a-single-page-interactive-experience-that-starts-in-a-first-person-rv-driver-view-traveling-scene-showing-a-seated-driver-perspective-view-on-screen",
@@ -133,6 +135,86 @@
         "REQ-15"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-ensure-the-on-road-traveling-view-always-shows-visible-scenery-either-the-rv-travel-video-or-an-animated-fallback-and-never-renders-as-a-blank-black-background-during-travel-segments",
+      "title": "Ensure the on-road traveling view always shows visible scenery (either the RV travel video or an animated fallback) and never renders as a blank/black background during travel segments.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-improve-travelvideoscene-so-it-robustly-detects-non-playing-video-states-e-g-no-playing-event-stalled-waiting-or-prolonged-loading-and-switches-to-a-fallback-mode-that-includes-subtle-motion-animation-rather-than-a-purely-static-image",
+      "title": "Improve TravelVideoScene so it robustly detects non-playing video states (e.g., no 'playing' event, stalled, waiting, or prolonged loading) and switches to a fallback mode that includes subtle motion (animation) rather than a purely static image.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-travelvideoscene-correctly-resets-its-internal-timers-and-playback-fallback-detection-each-time-a-new-travel-segment-starts-so-that-subsequent-travel-segments-after-checkpoints-transitions-also-reliably-show-scenery-and-trigger-timed-checkpoint-destination-progression",
+      "title": "Ensure TravelVideoScene correctly resets its internal timers and playback/fallback detection each time a new travel segment starts, so that subsequent travel segments (after checkpoints/transitions) also reliably show scenery and trigger timed checkpoint/destination progression.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-delay-the-transition-into-the-post-checkpoint-3-journey-halt-issue-by-2-3-seconds-after-the-user-completes-the-3rd-checkpoint-s-action-playback-do-not-show-the-halt-issue-overlay-immediately-on-the-last-action-playback-completion",
+      "title": "Delay the transition into the post-checkpoint-3 journey halt issue by ~2–3 seconds after the user completes the 3rd checkpoint’s Action Playback (do not show the halt issue overlay immediately on the last Action Playback completion).",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-checkpoint-activity-selection-validation-so-the-user-must-select-at-least-2-activities-before-continuing-while-still-enforcing-a-maximum-of-2-selections-update-the-checkpoint-overlay-guidance-text-and-disabled-button-messaging-accordingly-in-english",
+      "title": "Update checkpoint activity selection validation so the user must select at least 2 activities before continuing (while still enforcing a maximum of 2 selections). Update the checkpoint overlay guidance text and disabled-button messaging accordingly in English.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-or-replace-any-checkpoint-activity-option-that-is-not-related-to-water-involved-tasks-so-that-all-remaining-activity-options-are-water-related-across-all-checkpoints",
+      "title": "Remove or replace any checkpoint activity option that is not related to water-involved tasks so that all remaining activity options are water-related across all checkpoints.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-change-the-traveling-segments-so-that-reaching-a-checkpoint-and-showing-the-checkpoint-activity-overlay-is-triggered-by-a-user-click-tap-anywhere-on-the-journey-traveling-screen-rather-than-by-an-elapsed-time-timer-based-trigger",
+      "title": "Change the traveling segments so that reaching a checkpoint (and showing the checkpoint activity overlay) is triggered by a user click/tap anywhere on the journey/traveling screen, rather than by an elapsed-time/timer-based trigger.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-travelvideoscene-to-support-click-to-advance-behavior-by-removing-neutralizing-its-travel-duration-timer-logic-for-checkpoint-arrival-while-keeping-video-playback-health-monitoring-and-animated-fallback-scenery-intact",
+      "title": "Update TravelVideoScene to support click-to-advance behavior by removing/neutralizing its travel-duration timer logic for checkpoint arrival (while keeping video playback health monitoring and animated fallback scenery intact).",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-rvexperience-to-wire-the-new-click-to-advance-trigger-from-the-traveling-view-to-the-existing-startcheckpoint-segment-logic-and-ensure-the-timed-travelduration-ontraveltimereached-path-is-no-longer-used-for-checkpoints",
+      "title": "Update RVExperience to wire the new click-to-advance trigger from the traveling view to the existing startCheckpoint(segment) logic (and ensure the timed travelDuration/onTravelTimeReached path is no longer used for checkpoints).",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-adjust-user-facing-on-screen-guidance-text-during-traveling-to-reflect-click-to-advance-english-only",
+      "title": "Adjust user-facing on-screen guidance text during traveling to reflect click-to-advance (English only).",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -205,6 +287,32 @@
     {
       "id": "AR-12",
       "summary": "Add a final destination reached state/scene after resuming from the post-checkpoint-3 halt, featuring a campfire.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "After the 3rd checkpoint action playback completes, delay the post-checkpoint-3 “Issue” interruption by ~2–3 seconds (do not show it immediately).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Update checkpoint selection rules so the user must select at least 2 activities before continuing (or alternatively remove any non-water-related activity so remaining choices are all water-involved).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Add a repository documentation file that (1) clearly states the app cannot be reimplemented in Flutter within this build system and will remain implemented as a React + TypeScript frontend with a Motoko backend, and (2) provides step-by-step instructions for downloading/exporting the full source code and running it locally (including required tooling and the exact commands to install dependencies, start the frontend, and run/build/deploy with dfx).",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Trigger checkpoint activity/overlay when the user clicks somewhere on the journey screen (click-to-advance), instead of using timed/elapsed travel playback to show checkpoints.",
       "reqIds": [],
       "status": "pending"
     }

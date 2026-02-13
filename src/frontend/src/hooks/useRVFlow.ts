@@ -6,6 +6,7 @@ export type FlowState =
   | { type: 'checkpoint'; checkpointNumber: number; selectedActions: Set<string>; selectionLimitReached: boolean }
   | { type: 'playback'; checkpointNumber: number; selectedActionIds: string[] }
   | { type: 'transition'; fromCheckpoint: number }
+  | { type: 'post-checkpoint-3-delay' }
   | { type: 'halt-issue' }
   | { type: 'traveling-to-destination' }
   | { type: 'destination' }
@@ -64,6 +65,9 @@ export function useRVFlow() {
       
       const selectedActionIds = Array.from(prev.selectedActions);
       
+      // Require exactly 2 activities
+      if (selectedActionIds.length !== 2) return prev;
+      
       // Apply internal resource consumption
       let totalConsumption = 0;
       selectedActionIds.forEach(actionId => {
@@ -83,12 +87,22 @@ export function useRVFlow() {
     setFlowState((prev) => {
       if (prev.type !== 'playback') return prev;
       
-      // After checkpoint 3, go to halt-issue state
+      // After checkpoint 3, go to post-checkpoint-3-delay state
       if (prev.checkpointNumber === 3) {
-        return { type: 'halt-issue' };
+        return { type: 'post-checkpoint-3-delay' };
       }
       
       return { type: 'transition', fromCheckpoint: prev.checkpointNumber };
+    });
+  }, []);
+
+  const showHaltIssue = useCallback(() => {
+    setFlowState((prev) => {
+      // Only transition to halt-issue if we're in the delay state
+      if (prev.type === 'post-checkpoint-3-delay') {
+        return { type: 'halt-issue' };
+      }
+      return prev;
     });
   }, []);
 
@@ -130,6 +144,7 @@ export function useRVFlow() {
     toggleAction,
     completeCheckpoint,
     finishPlayback,
+    showHaltIssue,
     continueToNextSegment,
     resolveIssue,
     arriveAtDestination,
