@@ -1,0 +1,83 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-fix-the-missing-traveling-video-scenery-during-travel-segments-so-that-users-always-see-either-a-the-rv-front-view-traveling-video-or-b-a-reliable-visual-fallback-if-the-video-cannot-be-loaded-played",
+      "featureTitle": "Fix the missing traveling video/scenery during travel segments so that users always see either (a) the RV front-view traveling video or (b) a reliable visual fallback if the video cannot be loaded/played.",
+      "files": [
+        "frontend/src/components/rv/RVExperience.tsx",
+        "frontend/src/components/rv/TravelVideoScene.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-12"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-checkpoint-activity-options-so-the-actions-are-mostly-water-related-tasks-e-g-cooking-cleaning-freshen-up-grab-coffee-tea-refreshments-while-keeping-the-existing-1-2-selection-rule-and-the-hidden-internal-consumption-mechanic",
+      "featureTitle": "Update the checkpoint activity options so the actions are mostly water-related tasks (e.g., cooking, cleaning, freshen up, grab coffee/tea, refreshments), while keeping the existing 1–2 selection rule and the hidden internal consumption mechanic.",
+      "files": [
+        "frontend/src/components/rv/checkpoints.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-13"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-after-the-user-completes-the-3rd-checkpoint-s-action-playback-force-the-journey-to-come-to-a-halt-due-to-an-unidentified-issue-present-a-user-action-labeled-issue-resolved-and-only-resume-the-journey-after-the-user-clicks-it",
+      "featureTitle": "After the user completes the 3rd checkpoint’s action playback, force the journey to come to a halt due to an unidentified issue; present a user action labeled \"Issue resolved\" and only resume the journey after the user clicks it.",
+      "files": [
+        "frontend/src/components/rv/JourneyHaltIssueOverlay.tsx",
+        "frontend/src/components/rv/ProgressIndicator.tsx",
+        "frontend/src/components/rv/RVExperience.tsx",
+        "frontend/src/hooks/useRVFlow.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-14"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-after-the-user-clicks-issue-resolved-continue-the-journey-to-a-final-destination-scene-where-there-is-a-campfire-and-then-show-the-end-of-journey-completion-ui",
+      "featureTitle": "After the user clicks \"Issue resolved\", continue the journey to a final destination scene where there is a campfire, and then show the end-of-journey completion UI.",
+      "files": [
+        "frontend/src/components/rv/RVExperience.tsx",
+        "frontend/src/components/rv/scenes.ts",
+        "frontend/src/hooks/useRVFlow.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-15"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

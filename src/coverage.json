@@ -1,0 +1,94 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-13T06:33:04.070Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 4,
+    "implemented": 4,
+    "items": [
+      {
+        "id": "REQ-12",
+        "summary": "Fix the missing traveling video/scenery during travel segments so that users always see either (a) the RV front-view traveling video or (b) a reliable visual fallback if the video cannot be loaded/played.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/rv/TravelVideoScene.tsx",
+          "frontend/src/components/rv/RVExperience.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/rv/TravelVideoScene.tsx",
+          "frontend/src/components/rv/RVExperience.tsx"
+        ]
+      },
+      {
+        "id": "REQ-13",
+        "summary": "Update the checkpoint activity options so the actions are mostly water-related tasks (e.g., cooking, cleaning, freshen up, grab coffee/tea, refreshments), while keeping the existing 1–2 selection rule and the hidden internal consumption mechanic.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/rv/checkpoints.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/rv/checkpoints.ts"
+        ]
+      },
+      {
+        "id": "REQ-14",
+        "summary": "After the user completes the 3rd checkpoint’s action playback, force the journey to come to a halt due to an unidentified issue; present a user action labeled \"Issue resolved\" and only resume the journey after the user clicks it.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useRVFlow.ts",
+          "frontend/src/components/rv/RVExperience.tsx",
+          "frontend/src/components/rv/ProgressIndicator.tsx",
+          "frontend/src/components/rv/JourneyHaltIssueOverlay.tsx",
+          "frontend/public/assets/generated/rv-journey-halt-issue.dim_1920x1080.png"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useRVFlow.ts",
+          "frontend/src/components/rv/RVExperience.tsx",
+          "frontend/src/components/rv/ProgressIndicator.tsx",
+          "frontend/src/components/rv/JourneyHaltIssueOverlay.tsx",
+          "frontend/public/assets/generated/rv-journey-halt-issue.dim_1920x1080.png"
+        ]
+      },
+      {
+        "id": "REQ-15",
+        "summary": "After the user clicks \"Issue resolved\", continue the journey to a final destination scene where there is a campfire, and then show the end-of-journey completion UI.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useRVFlow.ts",
+          "frontend/src/components/rv/RVExperience.tsx",
+          "frontend/src/components/rv/scenes.ts",
+          "frontend/public/assets/generated/rv-destination-campfire.dim_1920x1080.png"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useRVFlow.ts",
+          "frontend/src/components/rv/RVExperience.tsx",
+          "frontend/src/components/rv/scenes.ts",
+          "frontend/public/assets/generated/rv-destination-campfire.dim_1920x1080.png"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/public/assets/generated/rv-destination-campfire.dim_1920x1080.png",
+    "frontend/public/assets/generated/rv-journey-halt-issue.dim_1920x1080.png",
+    "frontend/src/components/rv/JourneyHaltIssueOverlay.tsx",
+    "frontend/src/components/rv/ProgressIndicator.tsx",
+    "frontend/src/components/rv/RVExperience.tsx",
+    "frontend/src/components/rv/TravelVideoScene.tsx",
+    "frontend/src/components/rv/checkpoints.ts",
+    "frontend/src/components/rv/scenes.ts",
+    "frontend/src/hooks/useRVFlow.ts",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

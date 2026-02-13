@@ -1,0 +1,111 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "RV journey: travel video fallback, water-themed checkpoint actions, halt-after-checkpoint-3, and campfire destination",
+  "requirements": [
+    {
+      "id": "REQ-12",
+      "summary": "Ensure traveling segments always render visible scenery by adding a reliable fallback when the travel video cannot load/play, without breaking timed checkpoint progression.",
+      "acceptanceCriteria": [
+        "When the flow state is traveling, the UI renders visible scenery (video or fallback) instead of a blank/black/missing background.",
+        "If the video asset at \"/assets/rv-travel-front-view.mp4\" is missing or fails to play, the app displays a non-empty fallback travel view (e.g., a static scene background) without breaking timed checkpoint progression.",
+        "Timed checkpoint triggering still occurs after ~60 seconds of continuous traveling state per segment."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/rv/TravelVideoScene.tsx",
+          "operation": "modify",
+          "description": "Add robust video load/play failure detection (e.g., error/stall handling) and render a non-empty visual fallback (static background/scene) whenever the video cannot be shown; ensure the travel-duration timer continues to drive onTravelTimeReached even when fallback is active."
+        },
+        {
+          "path": "frontend/src/components/rv/RVExperience.tsx",
+          "operation": "modify",
+          "description": "Pass segment-appropriate fallback scene data into TravelVideoScene so the traveling state always has a visible background (video or static fallback), while preserving the existing ~60s timed progression behavior."
+        }
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "summary": "Update checkpoint activity options to mostly water-related tasks while preserving the 1–2 selection rule and the hidden internal consumption mechanic.",
+      "acceptanceCriteria": [
+        "Each checkpoint presents 3–4 actions and the majority of them match the requested water-related theme (cooking/cleaning/freshen up/coffee or tea/refreshments).",
+        "The UI copy does not explicitly mention water, hydration, or water consumption as the reason for any effects (the hidden consumption remains internal/subtle).",
+        "Users can select either 1 or 2 activities (no more than 2) before continuing, as currently enforced."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/rv/checkpoints.ts",
+          "operation": "modify",
+          "description": "Replace/adjust checkpoint action labels, descriptions, and icons so each checkpoint offers 3–4 actions that are mostly water-adjacent tasks (cooking/cleaning/freshen up/coffee or tea/refreshments) while keeping the existing consumption values and without adding any explicit user-facing text about water/hydration/consumption mechanics."
+        }
+      ]
+    },
+    {
+      "id": "REQ-14",
+      "summary": "After checkpoint 3 playback completes, enter a distinct halt/issue state and only resume after the user clicks the \"Issue resolved\" button.",
+      "acceptanceCriteria": [
+        "After completing checkpoint 3 playback, the app does not immediately show the normal trip completion screen; instead it enters a distinct halt/issue state.",
+        "In the halt/issue state, the UI displays a clear message indicating an unidentified issue and a button labeled exactly \"Issue resolved\".",
+        "The journey resumes only after the user clicks \"Issue resolved\" (no automatic continuation)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useRVFlow.ts",
+          "operation": "modify",
+          "description": "Introduce a distinct halt/issue flow state that triggers immediately after finishing checkpoint 3 playback, plus an explicit action to resolve the issue that is user-initiated only."
+        },
+        {
+          "path": "frontend/src/components/rv/RVExperience.tsx",
+          "operation": "modify",
+          "description": "Wire the new halt/issue flow state into rendering: show the dedicated halt background scene and an overlay with an \"Issue resolved\" button that calls the new resolve action. Use shadcn-ui Button/Card (Verify the component's usage instructions before implementing.)"
+        },
+        {
+          "path": "frontend/src/components/rv/ProgressIndicator.tsx",
+          "operation": "modify",
+          "description": "Update status/progress text handling to account for the new halt/issue state so the UI communicates the paused journey state appropriately."
+        },
+        {
+          "path": "frontend/src/components/rv/JourneyHaltIssueOverlay.tsx",
+          "operation": "create",
+          "description": "Create a dedicated overlay component for the halt/issue state that shows an unidentified-issue message and a button labeled exactly \"Issue resolved\". Use shadcn-ui components (e.g., Button/Card/Badge) for consistent styling. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/public/assets/generated/rv-journey-halt-issue.dim_1920x1080.png",
+          "operation": "create",
+          "description": "Add the generated static background image asset for the halt/issue scene at frontend/public/assets/generated/rv-journey-halt-issue.dim_1920x1080.png and ensure it is referenced by the halt/issue UI (no backend involvement)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "summary": "After \"Issue resolved\", resume traveling to a final campfire destination scene (static image) and then show the end-of-journey completion UI with restart support.",
+      "acceptanceCriteria": [
+        "Clicking \"Issue resolved\" transitions back into traveling and then reaches a final destination scene that visually depicts a campfire.",
+        "The destination scene uses a dedicated static background image under frontend/public/assets/generated (not served by the backend).",
+        "After reaching the campfire destination scene, the app shows the journey completion UI (or equivalent end state) and still supports restarting the journey."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useRVFlow.ts",
+          "operation": "modify",
+          "description": "Extend the flow to: after resolving the issue, resume traveling to a final destination step, then enter a destination/complete state that displays the campfire scene before/with the completion UI; ensure no automatic continuation past the halt occurs without the user click."
+        },
+        {
+          "path": "frontend/src/components/rv/RVExperience.tsx",
+          "operation": "modify",
+          "description": "Wire post-\"Issue resolved\" progression: return to traveling, then transition into a final campfire destination scene using the generated campfire background, then show the existing TripComplete UI and keep restart working. Use existing shadcn-ui TripComplete button styling as-is (Verify the component's usage instructions before implementing, if new shadcn-ui usage is added here.)"
+        },
+        {
+          "path": "frontend/src/components/rv/scenes.ts",
+          "operation": "modify",
+          "description": "Add/adjust scene metadata to include a final campfire destination scene that references frontend/public/assets/generated/rv-destination-campfire.dim_1920x1080.png, and ensure it is used by the destination rendering path."
+        },
+        {
+          "path": "frontend/public/assets/generated/rv-destination-campfire.dim_1920x1080.png",
+          "operation": "create",
+          "description": "Add the generated static background image asset for the campfire destination at frontend/public/assets/generated/rv-destination-campfire.dim_1920x1080.png and ensure it is referenced by the destination scene (no backend involvement)."
+        }
+      ]
+    }
+  ]
+}

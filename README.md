@@ -1,2 +1,3 @@
-# interactive-rv-driver-view-website-with-3-checkpoints-and-action-choices
-Exported from Caffeine project: Interactive RV Driver-View Website with 3 Checkpoints and Action Choices
+## 
+
+To run app build and run docker image: `docker build -t app . docker run -it --network host app`

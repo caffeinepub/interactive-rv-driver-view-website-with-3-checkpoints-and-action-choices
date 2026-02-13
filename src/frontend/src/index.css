@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --radius: 0.5rem;
+        /* Warm desert/road-trip palette - sandy beiges, warm oranges, deep browns */
+        --background: 0.97 0.015 45;
+        --foreground: 0.25 0.02 35;
+        --card: 0.99 0.01 50;
+        --card-foreground: 0.25 0.02 35;
+        --popover: 0.99 0.01 50;
+        --popover-foreground: 0.25 0.02 35;
+        /* Warm terracotta/rust primary */
+        --primary: 0.55 0.18 35;
+        --primary-foreground: 0.99 0.01 50;
+        /* Warm sand secondary */
+        --secondary: 0.88 0.04 55;
+        --secondary-foreground: 0.30 0.03 35;
+        --muted: 0.92 0.02 50;
+        --muted-foreground: 0.50 0.02 40;
+        /* Warm amber accent */
+        --accent: 0.75 0.15 65;
+        --accent-foreground: 0.25 0.02 35;
+        --destructive: 0.55 0.22 25;
+        --destructive-foreground: 0.99 0.01 50;
+        --border: 0.88 0.03 50;
+        --input: 0.88 0.03 50;
+        --ring: 0.55 0.18 35;
+        --chart-1: 0.65 0.16 40;
+        --chart-2: 0.70 0.14 60;
+        --chart-3: 0.60 0.12 80;
+        --chart-4: 0.75 0.15 25;
+        --chart-5: 0.80 0.10 50;
+    }
+
+    .dark {
+        /* Dark mode: deep night road colors */
+        --background: 0.20 0.02 35;
+        --foreground: 0.95 0.01 50;
+        --card: 0.25 0.02 35;
+        --card-foreground: 0.95 0.01 50;
+        --popover: 0.22 0.02 35;
+        --popover-foreground: 0.95 0.01 50;
+        /* Bright warm orange for dark mode */
+        --primary: 0.70 0.20 40;
+        --primary-foreground: 0.20 0.02 35;
+        --secondary: 0.30 0.03 40;
+        --secondary-foreground: 0.95 0.01 50;
+        --muted: 0.28 0.02 40;
+        --muted-foreground: 0.65 0.02 45;
+        --accent: 0.65 0.16 50;
+        --accent-foreground: 0.95 0.01 50;
+        --destructive: 0.60 0.24 30;
+        --destructive-foreground: 0.95 0.01 50;
+        --border: 0.35 0.02 40;
+        --input: 0.35 0.02 40;
+        --ring: 0.70 0.20 40;
+    }
+
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+}
+
+@layer utilities {
+    .text-shadow-sm {
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+    .text-shadow-md {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    }
+    .text-shadow-lg {
+        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    }
+}
