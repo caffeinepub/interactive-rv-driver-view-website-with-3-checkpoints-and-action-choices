@@ -18,7 +18,7 @@ export function TravelTransition({ checkpointNumber, isLastCheckpoint }: TravelT
           <p className="text-lg text-muted-foreground">
             {isLastCheckpoint 
               ? 'Your journey is almost complete...'
-              : `Checkpoint ${checkpointNumber} complete! Continuing your adventure...`
+              : `Break Stop ${checkpointNumber} complete! Continuing your adventure...`
             }
           </p>
         </div>

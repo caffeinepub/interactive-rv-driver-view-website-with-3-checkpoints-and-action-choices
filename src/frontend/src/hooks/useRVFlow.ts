@@ -3,11 +3,12 @@ import { useState, useCallback } from 'react';
 export type FlowState = 
   | { type: 'start' }
   | { type: 'traveling'; segment: number }
-  | { type: 'checkpoint'; checkpointNumber: number; selectedActions: Set<string>; selectionLimitReached: boolean }
+  | { type: 'checkpoint'; checkpointNumber: number; selectedActions: Set<string> }
   | { type: 'playback'; checkpointNumber: number; selectedActionIds: string[] }
   | { type: 'transition'; fromCheckpoint: number }
   | { type: 'post-checkpoint-3-delay' }
   | { type: 'halt-issue' }
+  | { type: 'celebration' }
   | { type: 'traveling-to-destination' }
   | { type: 'destination' }
   | { type: 'complete' };
@@ -25,8 +26,7 @@ export function useRVFlow() {
     setFlowState({ 
       type: 'checkpoint', 
       checkpointNumber,
-      selectedActions: new Set(),
-      selectionLimitReached: false
+      selectedActions: new Set()
     });
   }, []);
 
@@ -37,25 +37,14 @@ export function useRVFlow() {
       const newSelected = new Set(prev.selectedActions);
       if (newSelected.has(actionId)) {
         newSelected.delete(actionId);
-        return {
-          ...prev,
-          selectedActions: newSelected,
-          selectionLimitReached: false
-        };
       } else {
-        if (newSelected.size >= 2) {
-          return {
-            ...prev,
-            selectionLimitReached: true
-          };
-        }
         newSelected.add(actionId);
-        return {
-          ...prev,
-          selectedActions: newSelected,
-          selectionLimitReached: false
-        };
       }
+      
+      return {
+        ...prev,
+        selectedActions: newSelected
+      };
     });
   }, []);
 
@@ -65,10 +54,10 @@ export function useRVFlow() {
       
       const selectedActionIds = Array.from(prev.selectedActions);
       
-      // Require exactly 2 activities
-      if (selectedActionIds.length !== 2) return prev;
+      // Require at least 1 activity
+      if (selectedActionIds.length < 1) return prev;
       
-      // Apply internal resource consumption
+      // Apply internal resource consumption for all selected activities
       let totalConsumption = 0;
       selectedActionIds.forEach(actionId => {
         totalConsumption += actionConsumptionMap[actionId] || 0;
@@ -120,6 +109,10 @@ export function useRVFlow() {
   }, []);
 
   const resolveIssue = useCallback(() => {
+    setFlowState({ type: 'celebration' });
+  }, []);
+
+  const proceedFromCelebration = useCallback(() => {
     setFlowState({ type: 'traveling-to-destination' });
   }, []);
 
@@ -147,6 +140,7 @@ export function useRVFlow() {
     showHaltIssue,
     continueToNextSegment,
     resolveIssue,
+    proceedFromCelebration,
     arriveAtDestination,
     completeJourney,
     restart

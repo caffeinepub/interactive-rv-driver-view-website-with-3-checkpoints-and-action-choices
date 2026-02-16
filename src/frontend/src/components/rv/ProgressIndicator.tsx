@@ -13,19 +13,21 @@ export function ProgressIndicator({ flowState }: ProgressIndicatorProps) {
       case 'start':
         return 'Ready to start';
       case 'traveling':
-        return `Traveling to Checkpoint ${flowState.segment}`;
+        return `Traveling to Break Stop ${flowState.segment}`;
       case 'checkpoint':
-        return `Checkpoint ${flowState.checkpointNumber} of 3`;
+        return `Break Stop ${flowState.checkpointNumber} of 3`;
       case 'playback':
-        return `Checkpoint ${flowState.checkpointNumber} Activities`;
+        return `Break Stop ${flowState.checkpointNumber} Activity`;
       case 'transition':
         return flowState.fromCheckpoint === 3 ? 'Continuing Journey' : 'Continuing Journey';
       case 'post-checkpoint-3-delay':
-        return 'Checkpoint 3 Complete';
+        return 'Break Stop 3 Complete';
       case 'halt-issue':
         return 'Journey Paused';
+      case 'celebration':
+        return 'Badge Earned!';
       case 'traveling-to-destination':
-        return 'Traveling to Destination';
+        return 'Arriving Soon';
       case 'destination':
         return 'Arrived at Campfire';
       case 'complete':
@@ -48,6 +50,8 @@ export function ProgressIndicator({ flowState }: ProgressIndicatorProps) {
       case 'post-checkpoint-3-delay':
         return 100;
       case 'halt-issue':
+        return 100;
+      case 'celebration':
         return 100;
       case 'traveling-to-destination':
         return 100;
@@ -73,6 +77,8 @@ export function ProgressIndicator({ flowState }: ProgressIndicatorProps) {
       case 'post-checkpoint-3-delay':
         return 3;
       case 'halt-issue':
+        return 3;
+      case 'celebration':
         return 3;
       case 'traveling-to-destination':
         return 3;

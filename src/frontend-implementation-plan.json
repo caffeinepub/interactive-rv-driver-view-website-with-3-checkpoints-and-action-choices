@@ -1,76 +1,21 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Click-to-advance checkpoint arrival on traveling screen",
+  "title": "Add reminder copy to Start Journey screen",
   "requirements": [
     {
-      "id": "REQ-23",
-      "summary": "Trigger checkpoint arrival and open the checkpoint activity overlay via a single click/tap anywhere on the traveling screen (no time-based auto-trigger).",
+      "id": "REQ-37",
+      "summary": "Display the exact introductory/reminder sentence on the Start Journey screen near the existing introduction text.",
       "acceptanceCriteria": [
-        "When the app is in the 'traveling' state, a single click/tap on the travel scene triggers arrival at the current segment's checkpoint and opens the CheckpointOverlay.",
-        "No checkpoint overlay appears automatically due to elapsed travel time while in the 'traveling' state.",
-        "Repeated clicks/taps while already transitioning to, or displaying, the checkpoint overlay do not trigger duplicate state changes or errors."
+        "The Start Journey screen displays the exact text: \"You are going on trip in RV. You dont see everything that's happening. Remember your choices!\"",
+        "The text matches exactly (including \"dont\" without an apostrophe), with no additional words inserted inside the quoted sentence",
+        "All user-facing text related to this addition is in English"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/rv/RVExperience.tsx",
+          "path": "frontend/src/components/rv/StartJourneyScreen.tsx",
           "operation": "modify",
-          "description": "In the 'traveling' state, add a click/tap handler (e.g., pointer/click) over the full travel scene to call the existing startCheckpoint(flowState.segment). Add a local guard (e.g., ref/state) so repeated taps while already advancing do not re-trigger. Ensure this handler is only active while flowState.type === 'traveling'."
-        },
-        {
-          "path": "frontend/src/components/rv/TravelVideoScene.tsx",
-          "operation": "modify",
-          "description": "Ensure the scene can act as a full-screen interactive target for click/tap (e.g., allow passing an onUserAdvance/onClick callback through to the root container) without breaking video playback monitoring or fallback rendering."
-        }
-      ]
-    },
-    {
-      "id": "REQ-24",
-      "summary": "Remove/neutralize TravelVideoScene's timer-driven checkpoint progression while preserving video stall detection and animated fallback scenery.",
-      "acceptanceCriteria": [
-        "TravelVideoScene no longer triggers progression via its internal elapsed-time interval for checkpoint arrival in traveling segments.",
-        "Video stall detection and the animated fallback layer continue to function as before (journey screen never renders as blank/black)."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/rv/TravelVideoScene.tsx",
-          "operation": "modify",
-          "description": "Refactor the travel-duration interval logic so it can be disabled for traveling segments (e.g., a prop like enableTimer/advanceMode). When disabled, do not schedule or run the elapsed-time interval that calls onTravelTimeReached. Keep the existing playback start timeout, stall detection, and AnimatedTravelFallback layering unchanged."
-        }
-      ]
-    },
-    {
-      "id": "REQ-25",
-      "summary": "Wire RVExperience traveling view click-to-advance to startCheckpoint(segment) and stop using the timed onTravelTimeReached path for checkpoints.",
-      "acceptanceCriteria": [
-        "In RVExperience, checkpoint arrival while 'traveling' is initiated from a user click/tap action, not from TravelVideoScene's timed callback.",
-        "The checkpoint order remains 1 → 2 → 3, and each click/tap advances only to the next expected checkpoint for the current segment."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/rv/RVExperience.tsx",
-          "operation": "modify",
-          "description": "Update the 'traveling' render path to disable/remove timed progression for checkpoints (stop passing the checkpoint trigger via onTravelTimeReached for traveling segments). Pass a click/tap callback instead (directly on a wrapper or via a new TravelVideoScene prop) that calls startCheckpoint(flowState.segment). Keep checkpoint numbering as-is by using flowState.segment for the next checkpoint."
-        },
-        {
-          "path": "frontend/src/components/rv/TravelVideoScene.tsx",
-          "operation": "modify",
-          "description": "Adjust the component API to support click-to-advance wiring from RVExperience (e.g., optional onUserAdvance handler) and to allow disabling timer-based progression for checkpoints, while leaving any non-checkpoint uses (e.g., other screens that still rely on timing) unaffected."
-        }
-      ]
-    },
-    {
-      "id": "REQ-26",
-      "summary": "Update traveling on-screen guidance text to instruct click/tap to reach the next checkpoint (English only), without mentioning timing.",
-      "acceptanceCriteria": [
-        "While traveling, the UI includes a clear English hint indicating the user can click/tap to reach the next checkpoint (without mentioning timing).",
-        "Existing checkpoint selection guidance (e.g., 'Choose 2 activities to continue') remains unchanged unless required to support the click-to-advance flow."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/rv/TravelVideoScene.tsx",
-          "operation": "modify",
-          "description": "Update the traveling guidance copy rendered on the traveling screen to an English click/tap hint (e.g., replace/augment 'Enjoying the scenic drive...' with instruction to click/tap anywhere to reach the next checkpoint). Ensure this text does not reference timers or elapsed time."
+          "description": "Add the exact reminder copy \"You are going on trip in RV. You dont see everything that's happening. Remember your choices!\" as additional visible text near the existing introduction content (e.g., adjacent to the current CardDescription) without changing any spelling, punctuation, or wording, and without modifying any files under frontend/src/components/ui."
         }
       ]
     }

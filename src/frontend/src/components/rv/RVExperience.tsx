@@ -9,6 +9,7 @@ import { TravelTransition } from './TravelTransition';
 import { TripComplete } from './TripComplete';
 import { ProgressIndicator } from './ProgressIndicator';
 import { JourneyHaltIssueOverlay } from './JourneyHaltIssueOverlay';
+import { CampfireEndScreen } from './CampfireEndScreen';
 import { scenes, haltIssueScene, campfireDestinationScene } from './scenes';
 import { checkpoints } from './checkpoints';
 
@@ -23,6 +24,7 @@ export function RVExperience() {
     showHaltIssue,
     continueToNextSegment,
     resolveIssue,
+    proceedFromCelebration,
     arriveAtDestination,
     completeJourney,
     restart 
@@ -59,6 +61,28 @@ export function RVExperience() {
       return () => clearTimeout(timer);
     }
   }, [flowState, showHaltIssue]);
+
+  // Auto-advance through celebration state to traveling-to-destination
+  useEffect(() => {
+    if (flowState.type === 'celebration') {
+      const timer = setTimeout(() => {
+        proceedFromCelebration();
+      }, 100); // Immediate transition
+      
+      return () => clearTimeout(timer);
+    }
+  }, [flowState, proceedFromCelebration]);
+
+  // Auto-advance from traveling-to-destination to destination after 2 seconds
+  useEffect(() => {
+    if (flowState.type === 'traveling-to-destination') {
+      const timer = setTimeout(() => {
+        arriveAtDestination();
+      }, 2000); // 2 seconds delay
+      
+      return () => clearTimeout(timer);
+    }
+  }, [flowState, arriveAtDestination]);
 
   const handleUserAdvanceToCheckpoint = (checkpointNumber: number) => {
     if (isAdvancingRef.current) return;
@@ -103,7 +127,6 @@ export function RVExperience() {
             <CheckpointOverlay
               checkpoint={checkpoint}
               selectedActions={flowState.selectedActions}
-              selectionLimitReached={flowState.selectionLimitReached}
               onToggleAction={toggleAction}
               onContinue={() => completeCheckpoint(actionConsumptionMap)}
             />
@@ -167,15 +190,24 @@ export function RVExperience() {
         );
       }
 
-      case 'traveling-to-destination': {
-        // Create unique segment key for resetting TravelVideoScene state
-        const segmentKey = 'traveling-to-destination';
+      case 'celebration': {
+        // Auto-advance through this state, no visible screen
         return (
-          <TravelVideoScene 
-            onTravelTimeReached={arriveAtDestination}
-            enableTimer={true}
-            travelDuration={60000}
-            segmentKey={segmentKey}
+          <TravelScene 
+            backgroundImage={haltIssueScene.backgroundImage}
+            title={haltIssueScene.title}
+            description={haltIssueScene.description}
+          />
+        );
+      }
+
+      case 'traveling-to-destination': {
+        // Show a brief transition screen while waiting for campfire
+        return (
+          <TravelScene 
+            backgroundImage={campfireDestinationScene.backgroundImage}
+            title="Arriving at Destination"
+            description="Your campfire awaits..."
           />
         );
       }
@@ -188,22 +220,7 @@ export function RVExperience() {
               title={campfireDestinationScene.title}
               description={campfireDestinationScene.description}
             />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center space-y-6 animate-fade-in">
-                <h2 className="text-4xl font-bold text-white text-shadow-lg">
-                  Welcome to Camp! 🏕️
-                </h2>
-                <p className="text-xl text-white/90 text-shadow">
-                  Time to relax by the campfire
-                </p>
-                <button
-                  onClick={completeJourney}
-                  className="mt-8 px-8 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors shadow-warm"
-                >
-                  Continue
-                </button>
-              </div>
-            </div>
+            <CampfireEndScreen onContinue={completeJourney} />
           </>
         );
       }

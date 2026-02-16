@@ -2,11 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-change-the-traveling-segments-so-that-reaching-a-checkpoint-and-showing-the-checkpoint-activity-overlay-is-triggered-by-a-user-click-tap-anywhere-on-the-journey-traveling-screen-rather-than-by-an-elapsed-time-timer-based-trigger",
-      "featureTitle": "Change the traveling segments so that reaching a checkpoint (and showing the checkpoint activity overlay) is triggered by a user click/tap anywhere on the journey/traveling screen, rather than by an elapsed-time/timer-based trigger.",
+      "featureId": "feature-add-the-following-exact-introductory-reminder-copy-to-the-experience-ui-so-users-see-it-before-or-at-the-start-of-the-journey-you-are-going-on-trip-in-rv-you-dont-see-everything-that-s-happening-remember-your-choices-implement-this-in-the-start-journey-screen-frontend-src-components-rv-startjourneyscreen-tsx-as-additional-visible-text-near-the-existing-introduction-content-without-changing-the-sentence-text-punctuation-or-spelling",
+      "featureTitle": "Add the following exact introductory/reminder copy to the experience UI so users see it before or at the start of the journey: \"You are going on trip in RV. You dont see everything that's happening. Remember your choices!\". Implement this in the Start Journey screen (frontend/src/components/rv/StartJourneyScreen.tsx) as additional visible text near the existing introduction content, without changing the sentence text, punctuation, or spelling.",
       "files": [
-        "frontend/src/components/rv/RVExperience.tsx",
-        "frontend/src/components/rv/TravelVideoScene.tsx"
+        "frontend/src/components/rv/StartJourneyScreen.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -16,62 +15,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-23"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-update-travelvideoscene-to-support-click-to-advance-behavior-by-removing-neutralizing-its-travel-duration-timer-logic-for-checkpoint-arrival-while-keeping-video-playback-health-monitoring-and-animated-fallback-scenery-intact",
-      "featureTitle": "Update TravelVideoScene to support click-to-advance behavior by removing/neutralizing its travel-duration timer logic for checkpoint arrival (while keeping video playback health monitoring and animated fallback scenery intact).",
-      "files": [
-        "frontend/src/components/rv/TravelVideoScene.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-24"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-update-rvexperience-to-wire-the-new-click-to-advance-trigger-from-the-traveling-view-to-the-existing-startcheckpoint-segment-logic-and-ensure-the-timed-travelduration-ontraveltimereached-path-is-no-longer-used-for-checkpoints",
-      "featureTitle": "Update RVExperience to wire the new click-to-advance trigger from the traveling view to the existing startCheckpoint(segment) logic (and ensure the timed travelDuration/onTravelTimeReached path is no longer used for checkpoints).",
-      "files": [
-        "frontend/src/components/rv/RVExperience.tsx",
-        "frontend/src/components/rv/TravelVideoScene.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-25"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-adjust-user-facing-on-screen-guidance-text-during-traveling-to-reflect-click-to-advance-english-only",
-      "featureTitle": "Adjust user-facing on-screen guidance text during traveling to reflect click-to-advance (English only).",
-      "files": [
-        "frontend/src/components/rv/TravelVideoScene.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-26"
+        "REQ-37"
       ],
       "confidence": "high"
     }

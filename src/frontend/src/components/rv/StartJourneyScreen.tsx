@@ -24,6 +24,9 @@ export function StartJourneyScreen({ onStart }: StartJourneyScreenProps) {
           <CardDescription className="text-lg">
             Embark on a scenic journey through beautiful landscapes. Make stops, explore activities, and create memories along the way.
           </CardDescription>
+          <p className="text-base font-medium text-foreground/90 pt-2">
+            You are going on trip in RV. You dont see everything that's happening. Remember your choices!
+          </p>
         </CardHeader>
         
         <CardContent className="space-y-6">
@@ -38,7 +41,7 @@ export function StartJourneyScreen({ onStart }: StartJourneyScreenProps) {
             <div className="flex items-start gap-3">
               <span className="text-2xl">📍</span>
               <div>
-                <p className="font-semibold text-foreground">3 Checkpoints</p>
+                <p className="font-semibold text-foreground">3 Break Stops</p>
                 <p>Stop at scenic locations and choose your activities</p>
               </div>
             </div>

@@ -2,12 +2,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckpointData } from './checkpoints';
-import { Check, AlertCircle } from 'lucide-react';
+import { Check } from 'lucide-react';
 
 interface CheckpointOverlayProps {
   checkpoint: CheckpointData;
   selectedActions: Set<string>;
-  selectionLimitReached: boolean;
   onToggleAction: (actionId: string) => void;
   onContinue: () => void;
 }
@@ -15,12 +14,10 @@ interface CheckpointOverlayProps {
 export function CheckpointOverlay({ 
   checkpoint, 
   selectedActions, 
-  selectionLimitReached,
   onToggleAction, 
   onContinue 
 }: CheckpointOverlayProps) {
-  const canContinue = selectedActions.size === 2;
-  const remainingSelections = Math.max(0, 2 - selectedActions.size);
+  const canContinue = selectedActions.size >= 1;
 
   return (
     <div className="absolute inset-0 z-20 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
@@ -28,7 +25,7 @@ export function CheckpointOverlay({
         <CardHeader className="text-center space-y-2">
           <div className="flex items-center justify-center gap-2">
             <Badge variant="secondary" className="text-base px-4 py-1">
-              Checkpoint {checkpoint.id}
+              Break Stop {checkpoint.id}
             </Badge>
           </div>
           <CardTitle className="text-3xl font-bold text-primary">
@@ -41,31 +38,21 @@ export function CheckpointOverlay({
         
         <CardContent className="space-y-3">
           <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mb-4">
-            <p>Choose 2 activities to continue</p>
-            {selectionLimitReached && (
-              <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
-                <AlertCircle className="w-4 h-4" />
-                <span className="text-xs font-medium">Maximum 2 activities</span>
-              </div>
-            )}
+            <p>Choose at least 1 activity to continue</p>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {checkpoint.actions.map((action) => {
               const isSelected = selectedActions.has(action.id);
-              const isDisabled = !isSelected && selectedActions.size >= 2;
               
               return (
                 <button
                   key={action.id}
                   onClick={() => onToggleAction(action.id)}
-                  disabled={isDisabled}
                   className={`
                     relative p-4 rounded-lg border-2 transition-all duration-200 text-left
                     ${isSelected 
                       ? 'border-primary bg-primary/10 shadow-md' 
-                      : isDisabled
-                      ? 'border-border bg-muted/50 opacity-50 cursor-not-allowed'
                       : 'border-border bg-card hover:border-primary/50 hover:shadow-sm cursor-pointer'
                     }
                   `}
@@ -99,7 +86,7 @@ export function CheckpointOverlay({
           >
             {canContinue 
               ? 'Continue Journey' 
-              : `Select ${remainingSelections} more ${remainingSelections === 1 ? 'activity' : 'activities'}`
+              : 'Select at least 1 activity'
             }
           </Button>
           

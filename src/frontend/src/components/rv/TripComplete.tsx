@@ -27,7 +27,7 @@ export function TripComplete({ onRestart }: TripCompleteProps) {
               Journey Complete!
             </CardTitle>
             <CardDescription className="text-lg">
-              You've successfully completed your RV adventure through all 3 checkpoints
+              You've successfully completed your RV adventure through all 3 break stops
             </CardDescription>
           </div>
         </CardHeader>
@@ -38,7 +38,7 @@ export function TripComplete({ onRestart }: TripCompleteProps) {
             <div className="flex justify-center gap-8 text-sm">
               <div>
                 <p className="text-2xl font-bold text-primary">3</p>
-                <p className="text-muted-foreground">Checkpoints</p>
+                <p className="text-muted-foreground">Break Stops</p>
               </div>
               <div>
                 <p className="text-2xl font-bold text-primary">4</p>

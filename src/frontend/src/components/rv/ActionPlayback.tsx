@@ -34,7 +34,7 @@ export function ActionPlayback({
         <CardHeader className="text-center space-y-3">
           <div className="flex items-center justify-center gap-2">
             <Badge variant="secondary" className="text-sm px-3 py-1">
-              Checkpoint {checkpointNumber}
+              Break Stop {checkpointNumber}
             </Badge>
             <Badge variant="outline" className="text-sm px-3 py-1">
               {currentIndex + 1} of {selectedActions.length}
@@ -44,7 +44,7 @@ export function ActionPlayback({
             Activity in Progress
           </CardTitle>
           <CardDescription className="text-base">
-            Experiencing your chosen activities
+            Experiencing your chosen activity
           </CardDescription>
         </CardHeader>
         
@@ -89,7 +89,7 @@ export function ActionPlayback({
             size="lg"
             className="w-full text-lg font-semibold"
           >
-            {isLastAction ? 'Continue Journey' : 'Next Activity'}
+            {isLastAction ? 'Complete Activities' : 'Next Activity'}
             <ChevronRight className="w-5 h-5 ml-2" />
           </Button>
         </CardContent>

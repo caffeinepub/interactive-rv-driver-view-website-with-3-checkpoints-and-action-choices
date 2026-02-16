@@ -1,18 +1,23 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 15,
-  "summary": "Flutter web app for a first-person RV driver-view journey: user clicks “Start Journey” to begin travel, reaches 3 checkpoints in order that are triggered by user clicks on the journey screen (not timed), chooses 1–2 water-related activities at each checkpoint, sees an interactive view of selected actions, then continues traveling; after the 3rd checkpoint the journey halts due to an unidentified issue and only resumes after the user clicks “Issue resolved,” continuing to a final destination scene with a campfire; includes a subtle hidden water-consumption mechanic across activities.",
+  "projectStateVersion": 23,
+  "summary": "Flutter web app for a first-person RV driver-view journey: user clicks “Start Journey” to begin travel, reaches 3 break stops/checkpoints in order triggered by user clicks on the journey screen (not timed), must select at least 1 water-related activity at each stop (additional selections allowed) to continue, sees an interactive view of the selected action(s), then continues traveling; after the post-break-stop-3 interruption is resolved, show the final combined campfire + congratulation/badge screen after ~2 seconds (not after a long travel timer); rest of the flow remains unchanged.",
   "architectural_notes": [
     "Implement as Flutter Web.",
     "Travel segments should support video playback with timed checkpoint triggers (elapsed time based).",
     "Add an internal (not overtly exposed) resource system for water consumption tied to activities.",
     "Add a post-checkpoint-3 interruption state that pauses travel playback until the user acknowledges “Issue resolved,” then resumes toward a final destination scene (campfire).",
     "Post-checkpoint-3 interruption should trigger after a short delay (~2–3s) following completion of checkpoint 3 action playback, not immediately.",
-    "Checkpoint progression should be triggered by user click interaction on the journey/travel screen (not by elapsed-time video timers)."
+    "Checkpoint progression should be triggered by user click interaction on the journey/travel screen (not by elapsed-time video timers).",
+    "Checkpoint UI terminology should be “Break Stop” (not “Checkpoint”) throughout the app.",
+    "Activity selection validation: require at least 1 activity selected to continue; allow selecting more than 1 (no longer 'exactly 1').",
+    "End-state UI: campfire + congratulatory checkpoint-1 message + RV badge + snap/selfie invite should be presented together on a single screen with attractive styling.",
+    "Final destination/campfire arrival must not depend on a long (e.g., 60s) final travel timer; after “Issue resolved”, transition to the campfire end screen after ~2 seconds."
   ],
   "known_issues": [
     "Traveling video/scenery is missing during travel segments.",
-    "During road/travel segments, the background is still missing; travel should show animations/video or at least changing images."
+    "During road/travel segments, the background is still missing; travel should show animations/video or at least changing images.",
+    "Campfire end screen does not appear shortly after “Issue resolved” (currently blocked by final travel segment/timer)."
   ],
   "isFixRequest": false,
   "existing_features": [
@@ -215,6 +220,94 @@
         "REQ-26"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-rename-all-user-facing-references-of-checkpoint-1-2-3-to-break-stop-1-2-3-and-any-checkpoint-x-of-3-phrasing-to-break-stop-x-of-3-across-the-ui-including-overlay-headers-progress-indicator-status-text-and-transition-messaging",
+      "title": "Rename all user-facing references of “Checkpoint 1/2/3” to “Break Stop 1/2/3” and any “Checkpoint X of 3” phrasing to “Break Stop X of 3” across the UI (including overlay headers, progress indicator status text, and transition messaging).",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-change-break-stop-activity-selection-validation-to-require-exactly-1-activity-maximum-1-before-the-user-can-continue-updating-selection-toggling-rules-disabled-state-behavior-and-all-related-english-guidance-cta-text-accordingly",
+      "title": "Change break-stop activity selection validation to require exactly 1 activity (maximum 1) before the user can continue, updating selection toggling rules, disabled-state behavior, and all related English guidance/CTA text accordingly.",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-new-celebration-badge-screen-that-is-shown-after-the-user-has-completed-all-three-break-stop-activities-and-then-resolves-the-post-break-stop-3-issue-the-celebration-screen-must-display-the-exact-text-you-have-got-an-rv-badge-take-a-snap-with-our-team",
+      "title": "Add a new celebration/badge screen that is shown after the user has completed all three break-stop activities and then resolves the post-break-stop-3 issue; the celebration screen must display the exact text: “You have got an RV badge. Take a snap with our team.”",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-break-stop-activity-selection-rules-so-that-selecting-at-least-1-activity-is-mandatory-to-continue-but-the-user-may-optionally-select-more-than-1-activity-no-maximum-this-must-include-updating-the-selection-toggling-behavior-and-validation-so-the-user-is-never-blocked-for-selecting-multiple-activities",
+      "title": "Update the Break Stop activity selection rules so that selecting at least 1 activity is mandatory to continue, but the user may optionally select more than 1 activity (no maximum). This must include updating the selection toggling behavior and validation so the user is never blocked for selecting multiple activities.",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-break-stop-overlay-ui-copy-and-states-to-reflect-the-new-selection-rule-minimum-1-no-maximum-including-removing-any-maximum-1-activity-messaging-and-any-ui-behavior-that-visually-implies-a-maximum-selection-cap-all-user-facing-text-must-be-in-english",
+      "title": "Update the Break Stop overlay UI copy and states to reflect the new selection rule (minimum 1, no maximum), including removing any “Maximum 1 activity” messaging and any UI behavior that visually implies a maximum selection cap. All user-facing text must be in English.",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-rv-flow-state-logic-to-support-carrying-1-selected-activities-from-the-break-stop-overlay-into-action-playback-instead-of-enforcing-exactly-one-internal-resource-consumption-must-still-be-applied-for-every-selected-activity-and-the-ui-must-remain-indirect-subtle-no-explicit-mention-of-water-hydration",
+      "title": "Update the RV flow state logic to support carrying 1+ selected activities from the Break Stop overlay into Action Playback (instead of enforcing exactly one). Internal resource consumption must still be applied for every selected activity, and the UI must remain indirect/subtle (no explicit mention of water/hydration).",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-change-the-end-of-journey-ux-so-that-the-campfire-arrival-and-the-congratulation-badge-selfie-invitation-are-presented-together-in-a-single-attractive-end-screen-the-screen-must-1-show-a-campfire-setup-2-congratulate-the-user-on-reaching-checkpoint-1-3-state-they-earned-an-rv-badge-and-4-invite-them-to-take-a-snap-selfie-with-the-team-the-rest-of-the-journey-flow-must-remain-unchanged",
+      "title": "Change the end-of-journey UX so that the campfire arrival and the congratulation/badge/selfie invitation are presented together in a single, attractive end screen. The screen must: (1) show a campfire setup, (2) congratulate the user on reaching “Checkpoint 1”, (3) state they earned an RV badge, and (4) invite them to take a snap/selfie with the team. The rest of the journey flow must remain unchanged.",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-badge-selfie-invitation-text-is-preserved-exactly-as-you-have-got-an-rv-badge-take-a-snap-with-our-team-when-shown-on-the-final-combined-campfire-end-screen-even-if-the-surrounding-ui-text-changes",
+      "title": "Ensure the badge/selfie invitation text is preserved exactly as: “You have got an RV badge. Take a snap with our team.” when shown on the final combined campfire end screen (even if the surrounding UI text changes).",
+      "reqIds": [
+        "REQ-34"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-post-break-stop-3-flow-so-that-after-the-user-clicks-the-issue-resolved-button-the-app-shows-the-final-campfire-end-screen-after-2-seconds-instead-of-waiting-for-a-60s-traveling-to-destination-timer-this-campfire-appearance-must-not-be-gated-on-travel-video-playback-starting-successfully",
+      "title": "Update the post–Break Stop 3 flow so that after the user clicks the \"Issue resolved\" button, the app shows the final campfire end screen after ~2 seconds (instead of waiting for a ~60s traveling-to-destination timer). This campfire appearance must not be gated on travel video playback starting successfully.",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-if-the-app-still-uses-an-intermediate-traveling-to-destination-state-screen-between-issue-resolved-and-the-campfire-end-screen-shorten-its-duration-to-2-seconds-and-ensure-it-always-transitions-to-the-destination-state-automatically-update-any-related-progress-status-text-to-remain-accurate-and-in-english",
+      "title": "If the app still uses an intermediate \"traveling-to-destination\" state/screen between \"Issue resolved\" and the campfire end screen, shorten its duration to ~2 seconds and ensure it always transitions to the destination state automatically; update any related progress/status text to remain accurate and in English.",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-the-following-exact-introductory-reminder-copy-to-the-experience-ui-so-users-see-it-before-or-at-the-start-of-the-journey-you-are-going-on-trip-in-rv-you-dont-see-everything-that-s-happening-remember-your-choices-implement-this-in-the-start-journey-screen-frontend-src-components-rv-startjourneyscreen-tsx-as-additional-visible-text-near-the-existing-introduction-content-without-changing-the-sentence-text-punctuation-or-spelling",
+      "title": "Add the following exact introductory/reminder copy to the experience UI so users see it before or at the start of the journey: \"You are going on trip in RV. You dont see everything that's happening. Remember your choices!\". Implement this in the Start Journey screen (frontend/src/components/rv/StartJourneyScreen.tsx) as additional visible text near the existing introduction content, without changing the sentence text, punctuation, or spelling.",
+      "reqIds": [
+        "REQ-37"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -249,12 +342,6 @@
       "status": "pending"
     },
     {
-      "id": "AR-6",
-      "summary": "At each checkpoint, allow selecting 1–2 activities (not all) from the given options.",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
       "id": "AR-7",
       "summary": "After selecting activities, show an interactive view representing the selected actions before continuing the journey.",
       "reqIds": [],
@@ -285,20 +372,8 @@
       "status": "pending"
     },
     {
-      "id": "AR-12",
-      "summary": "Add a final destination reached state/scene after resuming from the post-checkpoint-3 halt, featuring a campfire.",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
       "id": "AR-13",
       "summary": "After the 3rd checkpoint action playback completes, delay the post-checkpoint-3 “Issue” interruption by ~2–3 seconds (do not show it immediately).",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-14",
-      "summary": "Update checkpoint selection rules so the user must select at least 2 activities before continuing (or alternatively remove any non-water-related activity so remaining choices are all water-involved).",
       "reqIds": [],
       "status": "pending"
     },
@@ -313,6 +388,42 @@
     {
       "id": "AR-16",
       "summary": "Trigger checkpoint activity/overlay when the user clicks somewhere on the journey screen (click-to-advance), instead of using timed/elapsed travel playback to show checkpoints.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Rename “Checkpoint 1/2/3” to “Break Stop 1/2/3” across the UI (including progress/guidance text).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Update activity selection rules so only 1 activity is mandatory (user must pick at least 1), but users may choose one or more activities if they wish.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Change end-of-journey completion UI to congratulate on reaching Checkpoint 1 and show a campfire setup, indicate the user earned an RV badge, and invite them to take a snap/selfie with the team.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Combine the campfire portion and the congratulation/badge/invite messaging into a single attractive end screen.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "After the last Break Stop, once the user clicks “Issue resolved”, show the final combined campfire end screen after ~2 seconds (remove/avoid any ~60s final travel timer gating campfire).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Add introductory/on-screen copy: \"You are going on trip in RV. You dont see everything that's happening. Remember your choices!\" (exact text) in the experience UI (e.g., start screen or early journey guidance).",
       "reqIds": [],
       "status": "pending"
     }

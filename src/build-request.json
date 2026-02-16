@@ -1,81 +1,34 @@
 {
   "kind": "build_request",
-  "title": "Trigger checkpoint activity overlay via user click instead of timed travel duration",
+  "title": "Add introductory reminder copy about unseen events and user choices",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-23",
-      "text": "Change the traveling segments so that reaching a checkpoint (and showing the checkpoint activity overlay) is triggered by a user click/tap anywhere on the journey/traveling screen, rather than by an elapsed-time/timer-based trigger.",
+      "id": "REQ-37",
+      "text": "Add the following exact introductory/reminder copy to the experience UI so users see it before or at the start of the journey: \"You are going on trip in RV. You dont see everything that's happening. Remember your choices!\". Implement this in the Start Journey screen (frontend/src/components/rv/StartJourneyScreen.tsx) as additional visible text near the existing introduction content, without changing the sentence text, punctuation, or spelling.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "I want the activity at checkpoint  to be shown when I click somewhere in the journey screen  not specifying a time."
+          "Add this part like \"You are going on trip in RV. You dont see everything that's happening. Remember your choices!\""
         ]
       },
       "acceptanceCriteria": [
-        "When the app is in the 'traveling' state, a single click/tap on the travel scene triggers arrival at the current segment's checkpoint and opens the CheckpointOverlay.",
-        "No checkpoint overlay appears automatically due to elapsed travel time while in the 'traveling' state.",
-        "Repeated clicks/taps while already transitioning to, or displaying, the checkpoint overlay do not trigger duplicate state changes or errors."
-      ]
-    },
-    {
-      "id": "REQ-24",
-      "text": "Update TravelVideoScene to support click-to-advance behavior by removing/neutralizing its travel-duration timer logic for checkpoint arrival (while keeping video playback health monitoring and animated fallback scenery intact).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "...not specifying a time."
-        ]
-      },
-      "acceptanceCriteria": [
-        "TravelVideoScene no longer triggers progression via its internal elapsed-time interval for checkpoint arrival in traveling segments.",
-        "Video stall detection and the animated fallback layer continue to function as before (journey screen never renders as blank/black)."
-      ]
-    },
-    {
-      "id": "REQ-25",
-      "text": "Update RVExperience to wire the new click-to-advance trigger from the traveling view to the existing startCheckpoint(segment) logic (and ensure the timed travelDuration/onTravelTimeReached path is no longer used for checkpoints).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ]
-      },
-      "acceptanceCriteria": [
-        "In RVExperience, checkpoint arrival while 'traveling' is initiated from a user click/tap action, not from TravelVideoScene's timed callback.",
-        "The checkpoint order remains 1 → 2 → 3, and each click/tap advances only to the next expected checkpoint for the current segment."
-      ]
-    },
-    {
-      "id": "REQ-26",
-      "text": "Adjust user-facing on-screen guidance text during traveling to reflect click-to-advance (English only).",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ]
-      },
-      "acceptanceCriteria": [
-        "While traveling, the UI includes a clear English hint indicating the user can click/tap to reach the next checkpoint (without mentioning timing).",
-        "Existing checkpoint selection guidance (e.g., 'Choose 2 activities to continue') remains unchanged unless required to support the click-to-advance flow."
+        "The Start Journey screen displays the exact text: \"You are going on trip in RV. You dont see everything that's happening. Remember your choices!\"",
+        "The text matches exactly (including \"dont\" without an apostrophe), with no additional words inserted inside the quoted sentence",
+        "All user-facing text related to this addition is in English"
       ]
     }
   ],
   "constraints": [
-    "Do not implement this change in Flutter/Dart; the project must remain implemented as a React + TypeScript frontend with Tailwind + React Query and a Motoko backend, per platform constraints.",
-    "Do not edit files under frontend/src/components/ui or any other paths listed in frontend.immutablePaths."
+    "Do not modify files under frontend/src/components/ui or any other frontend immutable paths listed in SYSTEM_CONTEXT.",
+    "Backend (Motoko) is not required for this change; keep backend untouched unless strictly necessary."
   ],
   "nonGoals": [
-    "Adding or changing the number of checkpoints.",
-    "Changing checkpoint activity selection rules (must still require exactly 2 selections to continue).",
-    "Adding new backend logic or persistence for checkpoint progression.",
-    "Implementing any Flutter/Dart code or migrating the app to Flutter."
+    "Do not change journey flow logic, break stop logic, selection rules, or timers as part of this request.",
+    "Do not add new authentication, persistence, or backend APIs."
   ],
   "imageRequirements": {
     "required": [],

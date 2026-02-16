@@ -1,61 +1,24 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-13T11:29:49.226Z",
+  "generatedAt": "2026-02-16T05:49:26.721Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 4,
-    "implemented": 4,
+    "total": 1,
+    "implemented": 1,
     "items": [
       {
-        "id": "REQ-23",
-        "summary": "Change the traveling segments so that reaching a checkpoint (and showing the checkpoint activity overlay) is triggered by a user click/tap anywhere on the journey/traveling screen, rather than by an elapsed-time/timer-based trigger.",
+        "id": "REQ-37",
+        "summary": "Add the following exact introductory/reminder copy to the experience UI so users see it before or at the start of the journey: \"You are going on trip in RV. You dont see everything that's happening. Remember your choices!\". Implement this in the Start Journey screen (frontend/src/components/rv/StartJourneyScreen.tsx) as additional visible text near the existing introduction content, without changing the sentence text, punctuation, or spelling.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/rv/RVExperience.tsx",
-          "frontend/src/components/rv/TravelVideoScene.tsx"
+          "frontend/src/components/rv/StartJourneyScreen.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/rv/RVExperience.tsx",
-          "frontend/src/components/rv/TravelVideoScene.tsx"
-        ]
-      },
-      {
-        "id": "REQ-24",
-        "summary": "Update TravelVideoScene to support click-to-advance behavior by removing/neutralizing its travel-duration timer logic for checkpoint arrival (while keeping video playback health monitoring and animated fallback scenery intact).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/rv/TravelVideoScene.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/rv/TravelVideoScene.tsx"
-        ]
-      },
-      {
-        "id": "REQ-25",
-        "summary": "Update RVExperience to wire the new click-to-advance trigger from the traveling view to the existing startCheckpoint(segment) logic (and ensure the timed travelDuration/onTravelTimeReached path is no longer used for checkpoints).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/rv/RVExperience.tsx",
-          "frontend/src/components/rv/TravelVideoScene.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/rv/RVExperience.tsx",
-          "frontend/src/components/rv/TravelVideoScene.tsx"
-        ]
-      },
-      {
-        "id": "REQ-26",
-        "summary": "Adjust user-facing on-screen guidance text during traveling to reflect click-to-advance (English only).",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/rv/TravelVideoScene.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/rv/TravelVideoScene.tsx"
+          "frontend/src/components/rv/StartJourneyScreen.tsx"
         ]
       }
     ]
@@ -65,8 +28,7 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/rv/RVExperience.tsx",
-    "frontend/src/components/rv/TravelVideoScene.tsx",
+    "frontend/src/components/rv/StartJourneyScreen.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",
