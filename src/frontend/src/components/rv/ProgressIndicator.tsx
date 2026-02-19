@@ -14,13 +14,11 @@ export function ProgressIndicator({ flowState }: ProgressIndicatorProps) {
         return 'Ready to start';
       case 'traveling':
         return `Traveling to Break Stop ${flowState.segment}`;
-      case 'checkpoint':
-        return `Break Stop ${flowState.checkpointNumber} of 3`;
-      case 'playback':
-        return `Break Stop ${flowState.checkpointNumber} Activity`;
+      case 'break-stop':
+        return `Break Stop ${flowState.breakStopNumber} of 3`;
       case 'transition':
-        return flowState.fromCheckpoint === 3 ? 'Continuing Journey' : 'Continuing Journey';
-      case 'post-checkpoint-3-delay':
+        return flowState.fromBreakStop === 3 ? 'Continuing Journey' : 'Continuing Journey';
+      case 'post-break-stop-3-delay':
         return 'Break Stop 3 Complete';
       case 'halt-issue':
         return 'Journey Paused';
@@ -41,13 +39,11 @@ export function ProgressIndicator({ flowState }: ProgressIndicatorProps) {
         return 0;
       case 'traveling':
         return ((flowState.segment - 1) / 3) * 100;
-      case 'checkpoint':
-        return ((flowState.checkpointNumber - 0.5) / 3) * 100;
-      case 'playback':
-        return ((flowState.checkpointNumber - 0.3) / 3) * 100;
+      case 'break-stop':
+        return ((flowState.breakStopNumber - 0.5) / 3) * 100;
       case 'transition':
-        return (flowState.fromCheckpoint / 3) * 100;
-      case 'post-checkpoint-3-delay':
+        return (flowState.fromBreakStop / 3) * 100;
+      case 'post-break-stop-3-delay':
         return 100;
       case 'halt-issue':
         return 100;
@@ -62,19 +58,17 @@ export function ProgressIndicator({ flowState }: ProgressIndicatorProps) {
     }
   };
 
-  const getCurrentCheckpoint = (): number => {
+  const getCurrentBreakStop = (): number => {
     switch (flowState.type) {
       case 'start':
         return 0;
       case 'traveling':
         return flowState.segment;
-      case 'checkpoint':
-        return flowState.checkpointNumber;
-      case 'playback':
-        return flowState.checkpointNumber;
+      case 'break-stop':
+        return flowState.breakStopNumber;
       case 'transition':
-        return flowState.fromCheckpoint;
-      case 'post-checkpoint-3-delay':
+        return flowState.fromBreakStop;
+      case 'post-break-stop-3-delay':
         return 3;
       case 'halt-issue':
         return 3;
@@ -106,7 +100,7 @@ export function ProgressIndicator({ flowState }: ProgressIndicatorProps) {
             </span>
           </div>
           <Badge variant={isHalted ? "destructive" : "secondary"} className="text-xs">
-            {getCurrentCheckpoint()}/3
+            {getCurrentBreakStop()}/3
           </Badge>
         </div>
         
@@ -119,7 +113,7 @@ export function ProgressIndicator({ flowState }: ProgressIndicatorProps) {
               <div
                 key={num}
                 className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold transition-colors ${
-                  getCurrentCheckpoint() >= num
+                  getCurrentBreakStop() >= num
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted text-muted-foreground'
                 }`}

@@ -3,10 +3,9 @@ import { useState, useCallback } from 'react';
 export type FlowState = 
   | { type: 'start' }
   | { type: 'traveling'; segment: number }
-  | { type: 'checkpoint'; checkpointNumber: number; selectedActions: Set<string> }
-  | { type: 'playback'; checkpointNumber: number; selectedActionIds: string[] }
-  | { type: 'transition'; fromCheckpoint: number }
-  | { type: 'post-checkpoint-3-delay' }
+  | { type: 'break-stop'; breakStopNumber: number }
+  | { type: 'transition'; fromBreakStop: number }
+  | { type: 'post-break-stop-3-delay' }
   | { type: 'halt-issue' }
   | { type: 'celebration' }
   | { type: 'traveling-to-destination' }
@@ -15,80 +14,35 @@ export type FlowState =
 
 export function useRVFlow() {
   const [flowState, setFlowState] = useState<FlowState>({ type: 'start' });
-  const [internalResourceTotal, setInternalResourceTotal] = useState(0);
 
   const startJourney = useCallback(() => {
     setFlowState({ type: 'traveling', segment: 1 });
-    setInternalResourceTotal(0);
   }, []);
 
-  const startCheckpoint = useCallback((checkpointNumber: number) => {
+  const startBreakStop = useCallback((breakStopNumber: number) => {
     setFlowState({ 
-      type: 'checkpoint', 
-      checkpointNumber,
-      selectedActions: new Set()
+      type: 'break-stop', 
+      breakStopNumber
     });
   }, []);
 
-  const toggleAction = useCallback((actionId: string) => {
+  const continueFromBreakStop = useCallback(() => {
     setFlowState((prev) => {
-      if (prev.type !== 'checkpoint') return prev;
+      if (prev.type !== 'break-stop') return prev;
       
-      const newSelected = new Set(prev.selectedActions);
-      if (newSelected.has(actionId)) {
-        newSelected.delete(actionId);
-      } else {
-        newSelected.add(actionId);
+      // After break stop 3, go to post-break-stop-3-delay state
+      if (prev.breakStopNumber === 3) {
+        return { type: 'post-break-stop-3-delay' };
       }
       
-      return {
-        ...prev,
-        selectedActions: newSelected
-      };
-    });
-  }, []);
-
-  const completeCheckpoint = useCallback((actionConsumptionMap: Record<string, number>) => {
-    setFlowState((prev) => {
-      if (prev.type !== 'checkpoint') return prev;
-      
-      const selectedActionIds = Array.from(prev.selectedActions);
-      
-      // Require at least 1 activity
-      if (selectedActionIds.length < 1) return prev;
-      
-      // Apply internal resource consumption for all selected activities
-      let totalConsumption = 0;
-      selectedActionIds.forEach(actionId => {
-        totalConsumption += actionConsumptionMap[actionId] || 0;
-      });
-      setInternalResourceTotal(current => current + totalConsumption);
-      
-      return { 
-        type: 'playback', 
-        checkpointNumber: prev.checkpointNumber,
-        selectedActionIds
-      };
-    });
-  }, []);
-
-  const finishPlayback = useCallback(() => {
-    setFlowState((prev) => {
-      if (prev.type !== 'playback') return prev;
-      
-      // After checkpoint 3, go to post-checkpoint-3-delay state
-      if (prev.checkpointNumber === 3) {
-        return { type: 'post-checkpoint-3-delay' };
-      }
-      
-      return { type: 'transition', fromCheckpoint: prev.checkpointNumber };
+      return { type: 'transition', fromBreakStop: prev.breakStopNumber };
     });
   }, []);
 
   const showHaltIssue = useCallback(() => {
     setFlowState((prev) => {
       // Only transition to halt-issue if we're in the delay state
-      if (prev.type === 'post-checkpoint-3-delay') {
+      if (prev.type === 'post-break-stop-3-delay') {
         return { type: 'halt-issue' };
       }
       return prev;
@@ -99,12 +53,12 @@ export function useRVFlow() {
     setFlowState((prev) => {
       if (prev.type !== 'transition') return prev;
       
-      const nextCheckpoint = prev.fromCheckpoint + 1;
-      if (nextCheckpoint > 3) {
+      const nextBreakStop = prev.fromBreakStop + 1;
+      if (nextBreakStop > 3) {
         return { type: 'complete' };
       }
       
-      return { type: 'traveling', segment: nextCheckpoint };
+      return { type: 'traveling', segment: nextBreakStop };
     });
   }, []);
 
@@ -126,17 +80,13 @@ export function useRVFlow() {
 
   const restart = useCallback(() => {
     setFlowState({ type: 'start' });
-    setInternalResourceTotal(0);
   }, []);
 
   return {
     flowState,
-    internalResourceTotal,
     startJourney,
-    startCheckpoint,
-    toggleAction,
-    completeCheckpoint,
-    finishPlayback,
+    startBreakStop,
+    continueFromBreakStop,
     showHaltIssue,
     continueToNextSegment,
     resolveIssue,

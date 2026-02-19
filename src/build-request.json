@@ -1,34 +1,54 @@
 {
   "kind": "build_request",
-  "title": "Add introductory reminder copy about unseen events and user choices",
+  "title": "Trigger halt issue and campfire checkpoint only on user click",
+  "projectName": "RV Journey",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-37",
-      "text": "Add the following exact introductory/reminder copy to the experience UI so users see it before or at the start of the journey: \"You are going on trip in RV. You dont see everything that's happening. Remember your choices!\". Implement this in the Start Journey screen (frontend/src/components/rv/StartJourneyScreen.tsx) as additional visible text near the existing introduction content, without changing the sentence text, punctuation, or spelling.",
+      "id": "REQ-1",
+      "text": "Change the post-break-stop-3 halt issue so it does not appear automatically after the delay; instead, require an explicit user click/tap to show the halt issue overlay.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "Add this part like \"You are going on trip in RV. You dont see everything that's happening. Remember your choices!\""
+          "the issue should come when the user clicks only"
         ]
       },
       "acceptanceCriteria": [
-        "The Start Journey screen displays the exact text: \"You are going on trip in RV. You dont see everything that's happening. Remember your choices!\"",
-        "The text matches exactly (including \"dont\" without an apostrophe), with no additional words inserted inside the quoted sentence",
-        "All user-facing text related to this addition is in English"
+        "When the flow is in the state currently used to delay after Break Stop 3 (\"post-break-stop-3-delay\"), the app does not automatically transition into the halt issue overlay after any timeout.",
+        "A clear user action (click/tap on the scene and/or a visible button) is required to trigger the transition into the halt issue overlay.",
+        "After the user clicks/taps, the halt issue overlay (quiz) appears and behaves the same as before."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Change the campfire checkpoint (Checkpoint 1 / destination) so it does not appear automatically on arrival; instead, require an explicit user click/tap to enter the destination (campfire) screen.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "reaching the checkpoint1 (campfire) should also come when user clicks."
+        ]
+      },
+      "acceptanceCriteria": [
+        "While in the state currently used to travel to the destination (\"traveling-to-destination\"), the app does not automatically transition into the destination state after a timeout.",
+        "A clear user action (click/tap on the scene and/or a visible button) is required to transition into the destination (campfire) screen.",
+        "The campfire destination UI renders only after the user click/tap transition occurs.",
+        "The campfire celebration sound plays when the destination (campfire) screen is entered via the user click/tap transition (not earlier)."
       ]
     }
   ],
   "constraints": [
-    "Do not modify files under frontend/src/components/ui or any other frontend immutable paths listed in SYSTEM_CONTEXT.",
-    "Backend (Motoko) is not required for this change; keep backend untouched unless strictly necessary."
+    "Frontend files listed as immutable in SYSTEM_CONTEXT must not be edited (compose them instead).",
+    "Keep backend as a single Motoko actor; no backend changes are required for this request."
   ],
   "nonGoals": [
-    "Do not change journey flow logic, break stop logic, selection rules, or timers as part of this request.",
-    "Do not add new authentication, persistence, or backend APIs."
+    "Adding new checkpoints, changing the quiz content, or modifying the break-stop overlay copy beyond what is needed to support click-to-continue interaction.",
+    "Implementing real-time/multiplayer behavior or any backend persistence related to checkpoints/issues."
   ],
   "imageRequirements": {
     "required": [],

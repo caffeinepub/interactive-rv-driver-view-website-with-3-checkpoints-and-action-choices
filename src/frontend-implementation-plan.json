@@ -1,21 +1,58 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add reminder copy to Start Journey screen",
+  "title": "RV Journey: Make halt issue and campfire destination require explicit user click",
   "requirements": [
     {
-      "id": "REQ-37",
-      "summary": "Display the exact introductory/reminder sentence on the Start Journey screen near the existing introduction text.",
+      "id": "REQ-1",
+      "summary": "Stop auto-transitioning from post-break-stop-3-delay into the halt issue overlay; require an explicit click/tap to show the halt issue quiz overlay.",
       "acceptanceCriteria": [
-        "The Start Journey screen displays the exact text: \"You are going on trip in RV. You dont see everything that's happening. Remember your choices!\"",
-        "The text matches exactly (including \"dont\" without an apostrophe), with no additional words inserted inside the quoted sentence",
-        "All user-facing text related to this addition is in English"
+        "When the flow is in the state currently used to delay after Break Stop 3 (\"post-break-stop-3-delay\"), the app does not automatically transition into the halt issue overlay after any timeout.",
+        "A clear user action (click/tap on the scene and/or a visible button) is required to trigger the transition into the halt issue overlay.",
+        "After the user clicks/taps, the halt issue overlay (quiz) appears and behaves the same as before."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/rv/StartJourneyScreen.tsx",
+          "path": "frontend/src/components/rv/RVExperience.tsx",
           "operation": "modify",
-          "description": "Add the exact reminder copy \"You are going on trip in RV. You dont see everything that's happening. Remember your choices!\" as additional visible text near the existing introduction content (e.g., adjacent to the current CardDescription) without changing any spelling, punctuation, or wording, and without modifying any files under frontend/src/components/ui."
+          "description": "Remove the timeout-based auto-call that transitions from \"post-break-stop-3-delay\" to the halt issue overlay, and instead wire a user click/tap (scene click and/or a visible UI control) to call the existing showHaltIssue() transition while in that state."
+        },
+        {
+          "path": "frontend/src/components/rv/ClickToContinueHint.tsx",
+          "operation": "create",
+          "description": "Create a small reusable overlay hint for 'Tap/Click to continue' with an explicit button. Use the shadcn-ui Button component to provide a clear clickable control. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/rv/RVExperience.tsx",
+          "operation": "modify",
+          "description": "Render the new ClickToContinueHint overlay during \"post-break-stop-3-delay\" and connect its onClick handler to showHaltIssue(), ensuring JourneyHaltIssueOverlay remains unchanged and still mounts/behaves the same once entered."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Stop auto-transitioning from traveling-to-destination into the campfire destination screen; require an explicit click/tap to enter the destination and only then play the celebration sound.",
+      "acceptanceCriteria": [
+        "While in the state currently used to travel to the destination (\"traveling-to-destination\"), the app does not automatically transition into the destination state after a timeout.",
+        "A clear user action (click/tap on the scene and/or a visible button) is required to transition into the destination (campfire) screen.",
+        "The campfire destination UI renders only after the user click/tap transition occurs.",
+        "The campfire celebration sound plays when the destination (campfire) screen is entered via the user click/tap transition (not earlier)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/rv/RVExperience.tsx",
+          "operation": "modify",
+          "description": "Remove the timeout-based auto-call that transitions from \"traveling-to-destination\" to \"destination\", and instead wire a user click/tap (scene click and/or a visible UI control) to call the existing arriveAtDestination() transition while in that state."
+        },
+        {
+          "path": "frontend/src/components/rv/RVExperience.tsx",
+          "operation": "modify",
+          "description": "Reuse ClickToContinueHint during \"traveling-to-destination\" to provide a clear call-to-action; connect it to arriveAtDestination(). Ensure the existing campfire celebration sound logic remains tied to entering \"destination\" (so it cannot play before the user-triggered transition)."
+        },
+        {
+          "path": "frontend/src/components/rv/ClickToContinueHint.tsx",
+          "operation": "modify",
+          "description": "Adjust the overlay text/props (if needed) to support both contexts (post-break-stop-3 delay and traveling-to-destination) without introducing new screens. Keep using shadcn-ui Button for the explicit click target. Verify the component's usage instructions before implementing."
         }
       ]
     }

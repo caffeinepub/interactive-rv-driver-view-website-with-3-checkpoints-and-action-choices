@@ -3,24 +3,22 @@ import { useRVFlow } from '../../hooks/useRVFlow';
 import { StartJourneyScreen } from './StartJourneyScreen';
 import { TravelVideoScene } from './TravelVideoScene';
 import { TravelScene } from './TravelScene';
-import { CheckpointOverlay } from './CheckpointOverlay';
-import { ActionPlayback } from './ActionPlayback';
+import { BreakStopReachedOverlay } from './BreakStopReachedOverlay';
 import { TravelTransition } from './TravelTransition';
 import { TripComplete } from './TripComplete';
 import { ProgressIndicator } from './ProgressIndicator';
 import { JourneyHaltIssueOverlay } from './JourneyHaltIssueOverlay';
 import { CampfireEndScreen } from './CampfireEndScreen';
+import { ClickToContinueHint } from './ClickToContinueHint';
 import { scenes, haltIssueScene, campfireDestinationScene } from './scenes';
-import { checkpoints } from './checkpoints';
+import { useSfx } from '../../hooks/useSfx';
 
 export function RVExperience() {
   const { 
     flowState, 
     startJourney,
-    startCheckpoint, 
-    toggleAction, 
-    completeCheckpoint,
-    finishPlayback,
+    startBreakStop, 
+    continueFromBreakStop,
     showHaltIssue,
     continueToNextSegment,
     resolveIssue,
@@ -30,8 +28,12 @@ export function RVExperience() {
     restart 
   } = useRVFlow();
 
-  // Guard to prevent duplicate checkpoint triggers during traveling
+  // Guard to prevent duplicate break stop triggers during traveling
   const isAdvancingRef = useRef(false);
+
+  // Sound effects
+  const travelingSfx = useSfx('/assets/sfx/traveling-loop.mp3', { volume: 0.3, loop: true });
+  const campfireSfx = useSfx('/assets/sfx/campfire-celebration.mp3', { volume: 0.6 });
 
   // Reset advancing guard when leaving traveling state
   useEffect(() => {
@@ -51,43 +53,37 @@ export function RVExperience() {
     }
   }, [flowState, continueToNextSegment]);
 
-  // Delay showing halt-issue overlay by 2-3 seconds after checkpoint 3
-  useEffect(() => {
-    if (flowState.type === 'post-checkpoint-3-delay') {
-      const timer = setTimeout(() => {
-        showHaltIssue();
-      }, 2500); // 2.5 seconds delay
-      
-      return () => clearTimeout(timer);
-    }
-  }, [flowState, showHaltIssue]);
-
   // Auto-advance through celebration state to traveling-to-destination
   useEffect(() => {
     if (flowState.type === 'celebration') {
       const timer = setTimeout(() => {
         proceedFromCelebration();
-      }, 100); // Immediate transition
+      }, 100);
       
       return () => clearTimeout(timer);
     }
   }, [flowState, proceedFromCelebration]);
 
-  // Auto-advance from traveling-to-destination to destination after 2 seconds
+  // Handle traveling loop audio
   useEffect(() => {
-    if (flowState.type === 'traveling-to-destination') {
-      const timer = setTimeout(() => {
-        arriveAtDestination();
-      }, 2000); // 2 seconds delay
-      
-      return () => clearTimeout(timer);
+    if (flowState.type === 'traveling' || flowState.type === 'traveling-to-destination') {
+      travelingSfx.play();
+    } else {
+      travelingSfx.stop();
     }
-  }, [flowState, arriveAtDestination]);
+  }, [flowState.type]);
 
-  const handleUserAdvanceToCheckpoint = (checkpointNumber: number) => {
+  // Play campfire celebration sound when arriving at destination
+  useEffect(() => {
+    if (flowState.type === 'destination') {
+      campfireSfx.play();
+    }
+  }, [flowState.type]);
+
+  const handleUserAdvanceToBreakStop = (breakStopNumber: number) => {
     if (isAdvancingRef.current) return;
     isAdvancingRef.current = true;
-    startCheckpoint(checkpointNumber);
+    startBreakStop(breakStopNumber);
   };
 
   const renderContent = () => {
@@ -97,25 +93,18 @@ export function RVExperience() {
       }
 
       case 'traveling': {
-        // Create unique segment key for resetting TravelVideoScene state
         const segmentKey = `traveling-segment-${flowState.segment}`;
         return (
           <TravelVideoScene 
-            onUserAdvance={() => handleUserAdvanceToCheckpoint(flowState.segment)}
+            onUserAdvance={() => handleUserAdvanceToBreakStop(flowState.segment)}
             enableTimer={false}
             segmentKey={segmentKey}
           />
         );
       }
       
-      case 'checkpoint': {
-        const checkpoint = checkpoints[flowState.checkpointNumber - 1];
-        const scene = scenes[flowState.checkpointNumber - 1];
-        
-        const actionConsumptionMap: Record<string, number> = {};
-        checkpoint.actions.forEach(action => {
-          actionConsumptionMap[action.id] = action.consumption;
-        });
+      case 'break-stop': {
+        const scene = scenes[flowState.breakStopNumber - 1];
         
         return (
           <>
@@ -124,56 +113,37 @@ export function RVExperience() {
               title={scene.title}
               description={scene.description}
             />
-            <CheckpointOverlay
-              checkpoint={checkpoint}
-              selectedActions={flowState.selectedActions}
-              onToggleAction={toggleAction}
-              onContinue={() => completeCheckpoint(actionConsumptionMap)}
-            />
-          </>
-        );
-      }
-
-      case 'playback': {
-        const checkpoint = checkpoints[flowState.checkpointNumber - 1];
-        const selectedActions = checkpoint.actions.filter(action => 
-          flowState.selectedActionIds.includes(action.id)
-        );
-        
-        return (
-          <>
-            <TravelScene 
-              backgroundImage={scenes[flowState.checkpointNumber - 1].backgroundImage}
-              title={scenes[flowState.checkpointNumber - 1].title}
-              description={scenes[flowState.checkpointNumber - 1].description}
-            />
-            <ActionPlayback
-              checkpointNumber={flowState.checkpointNumber}
-              selectedActions={selectedActions}
-              onComplete={finishPlayback}
+            <BreakStopReachedOverlay
+              breakStopNumber={flowState.breakStopNumber}
+              onContinue={continueFromBreakStop}
             />
           </>
         );
       }
       
       case 'transition': {
-        const nextSegment = flowState.fromCheckpoint + 1;
+        const nextSegment = flowState.fromBreakStop + 1;
         return (
           <TravelTransition 
-            checkpointNumber={flowState.fromCheckpoint}
+            checkpointNumber={flowState.fromBreakStop}
             isLastCheckpoint={nextSegment > 3}
           />
         );
       }
 
-      case 'post-checkpoint-3-delay': {
-        // Show checkpoint 3 scene during delay
+      case 'post-break-stop-3-delay': {
         return (
-          <TravelScene 
-            backgroundImage={scenes[2].backgroundImage}
-            title={scenes[2].title}
-            description={scenes[2].description}
-          />
+          <>
+            <TravelScene 
+              backgroundImage={scenes[2].backgroundImage}
+              title={scenes[2].title}
+              description={scenes[2].description}
+            />
+            <ClickToContinueHint 
+              onContinue={showHaltIssue}
+              message="Continue journey"
+            />
+          </>
         );
       }
 
@@ -191,7 +161,6 @@ export function RVExperience() {
       }
 
       case 'celebration': {
-        // Auto-advance through this state, no visible screen
         return (
           <TravelScene 
             backgroundImage={haltIssueScene.backgroundImage}
@@ -202,13 +171,18 @@ export function RVExperience() {
       }
 
       case 'traveling-to-destination': {
-        // Show a brief transition screen while waiting for campfire
         return (
-          <TravelScene 
-            backgroundImage={campfireDestinationScene.backgroundImage}
-            title="Arriving at Destination"
-            description="Your campfire awaits..."
-          />
+          <>
+            <TravelScene 
+              backgroundImage={campfireDestinationScene.backgroundImage}
+              title="Arriving at Destination"
+              description="Your campfire awaits..."
+            />
+            <ClickToContinueHint 
+              onContinue={arriveAtDestination}
+              message="Arrive at campfire"
+            />
+          </>
         );
       }
 

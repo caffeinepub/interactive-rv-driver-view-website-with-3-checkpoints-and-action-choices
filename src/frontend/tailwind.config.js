@@ -105,6 +105,23 @@ export default {
                 'ken-burns-alt': {
                     '0%': { transform: 'scale(1.05) translate(-1%, -1%)' },
                     '100%': { transform: 'scale(1.15) translate(-3%, -3%)' }
+                },
+                'drip': {
+                    '0%, 100%': { transform: 'translateY(0) scale(1)', opacity: '1' },
+                    '50%': { transform: 'translateY(4px) scale(0.95)', opacity: '0.7' }
+                },
+                'error-pulse': {
+                    '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+                    '50%': { transform: 'scale(1.2)', opacity: '0.8' }
+                },
+                'steam-stop': {
+                    '0%': { opacity: '1', transform: 'scale(1)' },
+                    '50%': { opacity: '0.5', transform: 'scale(0.95)' },
+                    '100%': { opacity: '0.3', transform: 'scale(0.9)' }
+                },
+                'warning-blink': {
+                    '0%, 100%': { opacity: '1' },
+                    '50%': { opacity: '0.3' }
                 }
             },
             animation: {
@@ -114,7 +131,11 @@ export default {
                 'slide-up': 'slide-up 0.6s ease-out',
                 'pulse-slow': 'pulse-slow 3s ease-in-out infinite',
                 'ken-burns': 'ken-burns 20s ease-out infinite alternate',
-                'ken-burns-alt': 'ken-burns-alt 20s ease-out infinite alternate'
+                'ken-burns-alt': 'ken-burns-alt 20s ease-out infinite alternate',
+                'drip': 'drip 2s ease-in-out infinite',
+                'error-pulse': 'error-pulse 1.5s ease-in-out infinite',
+                'steam-stop': 'steam-stop 3s ease-out forwards',
+                'warning-blink': 'warning-blink 1s ease-in-out infinite'
             }
         }
     },

@@ -200,9 +200,11 @@ export function TravelVideoScene({
         <h2 className="text-3xl font-bold text-white text-shadow-lg">
           On the Road
         </h2>
-        <p className="text-lg text-white/90 text-shadow">
-          {onUserAdvance ? 'Click anywhere to reach the next checkpoint' : 'Enjoying the scenic drive...'}
-        </p>
+        {!onUserAdvance && (
+          <p className="text-lg text-white/90 text-shadow">
+            Enjoying the scenic drive...
+          </p>
+        )}
       </div>
     </div>
   );
