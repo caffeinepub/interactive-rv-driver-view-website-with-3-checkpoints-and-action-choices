@@ -18,10 +18,14 @@ export function ProgressIndicator({ flowState }: ProgressIndicatorProps) {
         return 'Break Stop 1 of 1';
       case 'post-break-stop-delay':
         return 'Break Stop Complete';
+      case 'post-break-road-to-issue':
+        return 'Continuing Journey';
       case 'halt-issue':
         return 'Journey Paused';
       case 'celebration':
         return 'Badge Earned!';
+      case 'post-issue-road-to-destination':
+        return 'Heading to Campfire';
       case 'traveling-to-destination':
         return 'Arriving Soon';
       case 'destination':
@@ -40,10 +44,14 @@ export function ProgressIndicator({ flowState }: ProgressIndicatorProps) {
       case 'break-stop':
         return 50;
       case 'post-break-stop-delay':
-        return 75;
+        return 60;
+      case 'post-break-road-to-issue':
+        return 65;
       case 'halt-issue':
-        return 75;
+        return 70;
       case 'celebration':
+        return 80;
+      case 'post-issue-road-to-destination':
         return 90;
       case 'traveling-to-destination':
         return 95;
@@ -57,8 +65,10 @@ export function ProgressIndicator({ flowState }: ProgressIndicatorProps) {
   const isAtBreakStop = (): boolean => {
     return flowState.type === 'break-stop' || 
            flowState.type === 'post-break-stop-delay' ||
+           flowState.type === 'post-break-road-to-issue' ||
            flowState.type === 'halt-issue' ||
            flowState.type === 'celebration' ||
+           flowState.type === 'post-issue-road-to-destination' ||
            flowState.type === 'traveling-to-destination' ||
            flowState.type === 'destination' ||
            flowState.type === 'complete';

@@ -9,6 +9,7 @@ import { ProgressIndicator } from './ProgressIndicator';
 import { JourneyHaltIssueOverlay } from './JourneyHaltIssueOverlay';
 import { CampfireEndScreen } from './CampfireEndScreen';
 import { ClickToContinueHint } from './ClickToContinueHint';
+import { AnimatedTravelFallback } from './AnimatedTravelFallback';
 import { scenes, haltIssueScene, campfireDestinationScene } from './scenes';
 import { useSfx } from '../../hooks/useSfx';
 
@@ -18,6 +19,7 @@ export function RVExperience() {
     startJourney,
     startBreakStop, 
     continueFromBreakStop,
+    showPostBreakRoad,
     showHaltIssue,
     resolveIssue,
     proceedFromCelebration,
@@ -40,7 +42,18 @@ export function RVExperience() {
     }
   }, [flowState.type]);
 
-  // Auto-advance through celebration state to traveling-to-destination
+  // Auto-advance through post-break-stop-delay to post-break-road-to-issue
+  useEffect(() => {
+    if (flowState.type === 'post-break-stop-delay') {
+      const timer = setTimeout(() => {
+        showPostBreakRoad();
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [flowState, showPostBreakRoad]);
+
+  // Auto-advance through celebration state to post-issue-road-to-destination
   useEffect(() => {
     if (flowState.type === 'celebration') {
       const timer = setTimeout(() => {
@@ -53,7 +66,7 @@ export function RVExperience() {
 
   // Handle traveling loop audio
   useEffect(() => {
-    if (flowState.type === 'traveling' || flowState.type === 'traveling-to-destination') {
+    if (flowState.type === 'traveling' || flowState.type === 'post-break-road-to-issue' || flowState.type === 'post-issue-road-to-destination') {
       travelingSfx.play();
     } else {
       travelingSfx.stop();
@@ -116,6 +129,14 @@ export function RVExperience() {
               title={scenes[0].title}
               description={scenes[0].description}
             />
+          </>
+        );
+      }
+
+      case 'post-break-road-to-issue': {
+        return (
+          <>
+            <AnimatedTravelFallback />
             <ClickToContinueHint 
               onContinue={showHaltIssue}
               message="Continue journey"
@@ -147,6 +168,18 @@ export function RVExperience() {
         );
       }
 
+      case 'post-issue-road-to-destination': {
+        return (
+          <>
+            <AnimatedTravelFallback />
+            <ClickToContinueHint 
+              onContinue={arriveAtDestination}
+              message="Arrive at campfire"
+            />
+          </>
+        );
+      }
+
       case 'traveling-to-destination': {
         return (
           <>
@@ -154,10 +187,6 @@ export function RVExperience() {
               backgroundImage={campfireDestinationScene.backgroundImage}
               title="Arriving at Destination"
               description="Your campfire awaits..."
-            />
-            <ClickToContinueHint 
-              onContinue={arriveAtDestination}
-              message="Arrive at campfire"
             />
           </>
         );

@@ -1,109 +1,106 @@
 {
   "kind": "build_request",
-  "title": "Simplify to single breakpoint and add journey sound effects",
-  "projectName": "RV Journey",
+  "title": "Fix duplicate text, slow down road transitions, add comprehensive audio, restore road scenes after breakpoint and issue",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Reduce the journey flow to include only one break stop instead of multiple checkpoints, maintaining the existing traveling → break stop → continue pattern",
+      "text": "Remove duplicate sentences from the StartJourneyScreen component so each piece of information appears only once",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-10"
+          "msg-last"
         ],
         "quotes": [
-          "I need only one Break point"
+          "in the first page there is duplication of sentences remove that and make it only one"
         ]
       },
       "acceptanceCriteria": [
-        "Journey includes exactly one break stop",
-        "Existing BreakStopReachedOverlay component is reused for the single break",
-        "Flow progression remains: traveling → break stop → user click → alert → continue → campfire"
+        "No text content is repeated on the start journey screen",
+        "All essential information remains present and clear"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Add background sound effect that plays during the traveling phase before reaching the break point",
+      "text": "Change the road image transition timing in AnimatedTravelFallback from the current interval to 20 seconds per image",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-10"
+          "msg-last"
         ],
         "quotes": [
-          "is it possible to add some sounds while traveling at the break point"
+          "Let the road images change a bit slowly make it to 20 sec for each road image change"
         ]
       },
       "acceptanceCriteria": [
-        "Sound plays automatically when travel scene begins",
-        "Sound loops or plays continuously during travel",
-        "Sound stops when break point is reached"
+        "Each road scene image displays for exactly 20 seconds before transitioning",
+        "Smooth crossfade transitions remain between images"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Add sound effect that plays when the break point is reached",
+      "text": "Add audio/sound effects for all interactive elements and transitions throughout the entire journey experience where audio is currently missing",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-10"
+          "msg-last"
         ],
         "quotes": [
-          "is it possible to add some sounds while traveling at the break point"
+          "add audio for everything"
         ]
       },
       "acceptanceCriteria": [
-        "Sound plays when BreakStopReachedOverlay appears",
-        "Sound is distinct from traveling sound",
-        "Existing break stop sound in BreakStopReachedOverlay.tsx can be enhanced or replaced"
+        "Audio plays at appropriate moments during the journey flow",
+        "Sound effects enhance user interactions without being overwhelming",
+        "All major transitions and screens have accompanying audio"
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Add sound effect that plays when the system alert is triggered after the user clicks to continue from the break point",
+      "text": "After the break point arrival overlay is dismissed, show the road traveling scene again with click-anywhere interaction before proceeding to the halt issue part",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-10"
+          "msg-last"
         ],
         "quotes": [
-          "system alert"
+          "after the break point part again road has to be shown clicking anywhere the issue part"
         ]
       },
       "acceptanceCriteria": [
-        "Sound plays when JourneyHaltIssueOverlay appears after break continue action",
-        "Sound indicates an alert or notification state",
-        "Sound timing aligns with visual alert presentation"
+        "Road scene displays after break point overlay is closed",
+        "User can click anywhere on the road scene to advance",
+        "Flow correctly transitions from road scene to halt issue overlay"
       ]
     },
     {
       "id": "REQ-5",
-      "text": "Add sound effect that plays when reaching the final campfire destination",
+      "text": "After the halt issue quiz overlay is resolved, show the road traveling scene again with click-anywhere interaction before reaching the final campfire destination",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-10"
+          "msg-last"
         ],
         "quotes": [
-          "and finally campfire"
+          "again road has to be shown clicking anywhere reaching destination campfire"
         ]
       },
       "acceptanceCriteria": [
-        "Sound plays when CampfireEndScreen component is displayed",
-        "Sound conveys arrival and completion",
-        "Sound complements the celebratory campfire visuals"
+        "Road scene displays after issue overlay is dismissed",
+        "User can click anywhere on the road scene to continue",
+        "Flow correctly transitions from road scene to campfire destination screen"
       ]
     }
   ],
   "constraints": [
-    "Do not change the overall flow structure after the break point (system alert and subsequent screens remain the same)",
-    "Reuse existing components (BreakStopReachedOverlay, JourneyHaltIssueOverlay, CampfireEndScreen) without modifying their core structure"
+    "Do not modify the backend/main.mo file",
+    "Preserve existing sound effects (traveling, break-point-reached, campfire-arrival, thud, alert, issue)",
+    "Maintain the single break stop flow architecture"
   ],
   "nonGoals": [
-    "Modifying the visual design or layout of existing overlays",
-    "Changing the quiz or action system in JourneyHaltIssueOverlay",
-    "Altering the campfire celebration animations",
-    "Adding multiple breakpoints or checkpoints"
+    "Changing the number of break stops",
+    "Modifying the halt issue quiz content or logic",
+    "Altering the campfire celebration screen design"
   ],
   "imageRequirements": {
     "required": [],

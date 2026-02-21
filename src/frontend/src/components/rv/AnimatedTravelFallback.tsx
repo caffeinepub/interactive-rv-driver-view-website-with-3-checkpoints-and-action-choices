@@ -11,7 +11,7 @@ const SCENE_IMAGES = [
   '/assets/generated/rv-scene-4.dim_1920x1080.png',
 ];
 
-const CROSSFADE_DURATION = 3000; // 3 seconds per image
+const CROSSFADE_DURATION = 20000; // 20 seconds per image
 
 export function AnimatedTravelFallback({ className = '' }: AnimatedTravelFallbackProps) {
   const [currentIndex, setCurrentIndex] = useState(0);

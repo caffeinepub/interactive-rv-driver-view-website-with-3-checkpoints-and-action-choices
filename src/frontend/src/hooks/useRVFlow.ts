@@ -5,7 +5,9 @@ export type FlowState =
   | { type: 'traveling'; segment: number }
   | { type: 'break-stop'; breakStopNumber: number }
   | { type: 'post-break-stop-delay' }
+  | { type: 'post-break-road-to-issue' }
   | { type: 'halt-issue' }
+  | { type: 'post-issue-road-to-destination' }
   | { type: 'celebration' }
   | { type: 'traveling-to-destination' }
   | { type: 'destination' }
@@ -34,14 +36,12 @@ export function useRVFlow() {
     });
   }, []);
 
+  const showPostBreakRoad = useCallback(() => {
+    setFlowState({ type: 'post-break-road-to-issue' });
+  }, []);
+
   const showHaltIssue = useCallback(() => {
-    setFlowState((prev) => {
-      // Only transition to halt-issue if we're in the delay state
-      if (prev.type === 'post-break-stop-delay') {
-        return { type: 'halt-issue' };
-      }
-      return prev;
-    });
+    setFlowState({ type: 'halt-issue' });
   }, []);
 
   const resolveIssue = useCallback(() => {
@@ -49,7 +49,7 @@ export function useRVFlow() {
   }, []);
 
   const proceedFromCelebration = useCallback(() => {
-    setFlowState({ type: 'traveling-to-destination' });
+    setFlowState({ type: 'post-issue-road-to-destination' });
   }, []);
 
   const arriveAtDestination = useCallback(() => {
@@ -69,6 +69,7 @@ export function useRVFlow() {
     startJourney,
     startBreakStop,
     continueFromBreakStop,
+    showPostBreakRoad,
     showHaltIssue,
     resolveIssue,
     proceedFromCelebration,

@@ -1,115 +1,113 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Simplify to single breakpoint and add journey sound effects",
+  "title": "Fix duplicate text, slow down road transitions, add comprehensive audio, restore road scenes after breakpoint and issue",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Reduce journey flow to include only one break stop instead of multiple checkpoints",
+      "summary": "Remove duplicate sentences from StartJourneyScreen so each piece of information appears only once",
       "acceptanceCriteria": [
-        "Journey includes exactly one break stop",
-        "Existing BreakStopReachedOverlay component is reused for the single break",
-        "Flow progression remains: traveling → break stop → user click → alert → continue → campfire"
+        "No text content is repeated on the start journey screen",
+        "All essential information remains present and clear"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useRVFlow.ts",
+          "path": "frontend/src/components/rv/StartJourneyScreen.tsx",
           "operation": "modify",
-          "description": "Update the flow state machine to support exactly one break stop instead of multiple checkpoints. Modify the checkpoint tracking logic to ensure only a single break occurs during the journey, maintaining the traveling → break stop → continue → alert → campfire sequence."
-        },
-        {
-          "path": "frontend/src/components/rv/ProgressIndicator.tsx",
-          "operation": "modify",
-          "description": "Update progress display logic to reflect the single break stop model. Adjust break stop count display and progress calculations to show 1 total break instead of multiple checkpoints."
-        },
-        {
-          "path": "frontend/src/components/rv/RVExperience.tsx",
-          "operation": "modify",
-          "description": "Update journey flow orchestration to use only one break stop. Ensure the component renders BreakStopReachedOverlay once during the journey and maintains proper flow state transitions."
+          "description": "Review the component markup and remove any duplicate text content while preserving all essential journey information (break stop count, limited visibility warning, and start instructions)"
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Add background sound effect during traveling phase before break point",
+      "summary": "Change road image transition timing in AnimatedTravelFallback from current interval to 20 seconds per image",
       "acceptanceCriteria": [
-        "Sound plays automatically when travel scene begins",
-        "Sound loops or plays continuously during travel",
-        "Sound stops when break point is reached"
+        "Each road scene image displays for exactly 20 seconds before transitioning",
+        "Smooth crossfade transitions remain between images"
       ],
       "file_operations": [
         {
-          "path": "frontend/public/assets/sounds/traveling-ambient.mp3",
-          "operation": "create",
-          "description": "Add traveling ambient sound effect audio file (placeholder - actual audio asset to be provided). This sound will play during the traveling phase before the break point."
-        },
-        {
-          "path": "frontend/src/components/rv/RVExperience.tsx",
+          "path": "frontend/src/components/rv/AnimatedTravelFallback.tsx",
           "operation": "modify",
-          "description": "Add traveling ambient sound playback using the useSfx hook. Start the sound when entering traveling state, loop it during travel, and stop it when transitioning to break stop state. Ensure sound cleanup on component unmount."
+          "description": "Update the image transition interval to 20000ms (20 seconds) in the component's timer logic while maintaining the existing crossfade animation behavior"
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Add sound effect when break point is reached",
+      "summary": "Add audio/sound effects for all interactive elements and transitions throughout the journey experience where currently missing",
       "acceptanceCriteria": [
-        "Sound plays when BreakStopReachedOverlay appears",
-        "Sound is distinct from traveling sound",
-        "Existing break stop sound in BreakStopReachedOverlay.tsx can be enhanced or replaced"
+        "Audio plays at appropriate moments during the journey flow",
+        "Sound effects enhance user interactions without being overwhelming",
+        "All major transitions and screens have accompanying audio"
       ],
       "file_operations": [
         {
-          "path": "frontend/public/assets/sounds/break-point-reached.mp3",
-          "operation": "create",
-          "description": "Add break point arrival sound effect audio file (placeholder - actual audio asset to be provided). This sound will play when the break stop overlay appears."
+          "path": "frontend/src/components/rv/StartJourneyScreen.tsx",
+          "operation": "modify",
+          "description": "Add sound effect playback when the start button is clicked to signal journey initiation"
         },
         {
-          "path": "frontend/src/components/rv/BreakStopReachedOverlay.tsx",
+          "path": "frontend/src/components/rv/ClickToContinueHint.tsx",
           "operation": "modify",
-          "description": "Update the existing sound effect to use the new break-point-reached.mp3 audio file. Ensure the sound plays when the overlay mounts and complements the visual break stop presentation."
+          "description": "Add sound effect when user clicks to continue from road scenes"
+        },
+        {
+          "path": "frontend/src/components/rv/TravelTransition.tsx",
+          "operation": "modify",
+          "description": "Add transition sound effect when loading screen appears between journey segments"
+        },
+        {
+          "path": "frontend/src/components/rv/RVBadgeCelebration.tsx",
+          "operation": "modify",
+          "description": "Add celebration sound effect when RV badge award overlay appears"
+        },
+        {
+          "path": "frontend/src/components/rv/TripComplete.tsx",
+          "operation": "modify",
+          "description": "Add completion sound effect when final journey summary screen appears"
         }
       ]
     },
     {
       "id": "REQ-4",
-      "summary": "Add sound effect when system alert is triggered after break continue action",
+      "summary": "After break point arrival overlay is dismissed, show road traveling scene again with click-anywhere interaction before proceeding to halt issue part",
       "acceptanceCriteria": [
-        "Sound plays when JourneyHaltIssueOverlay appears after break continue action",
-        "Sound indicates an alert or notification state",
-        "Sound timing aligns with visual alert presentation"
+        "Road scene displays after break point overlay is closed",
+        "User can click anywhere on the road scene to advance",
+        "Flow correctly transitions from road scene to halt issue overlay"
       ],
       "file_operations": [
         {
-          "path": "frontend/public/assets/sounds/system-alert.mp3",
-          "operation": "create",
-          "description": "Add system alert sound effect audio file (placeholder - actual audio asset to be provided). This sound will play when the journey halt issue overlay appears."
+          "path": "frontend/src/hooks/useRVFlow.ts",
+          "operation": "modify",
+          "description": "Add a new flow state 'post-break-road-to-issue' between 'break-stop' and 'halt-issue' states to show road scene after break point dismissal"
         },
         {
-          "path": "frontend/src/components/rv/JourneyHaltIssueOverlay.tsx",
+          "path": "frontend/src/components/rv/RVExperience.tsx",
           "operation": "modify",
-          "description": "Add alert sound playback using the useSfx hook. Trigger the system-alert.mp3 sound when the overlay mounts to indicate the issue state, ensuring timing aligns with the visual alert indicators."
+          "description": "Add rendering logic for the new post-break-road-to-issue state showing TravelScene or AnimatedTravelFallback with ClickToContinueHint overlay, transitioning to halt-issue state on click"
         }
       ]
     },
     {
       "id": "REQ-5",
-      "summary": "Add sound effect when reaching final campfire destination",
+      "summary": "After halt issue quiz overlay is resolved, show road traveling scene again with click-anywhere interaction before reaching final campfire destination",
       "acceptanceCriteria": [
-        "Sound plays when CampfireEndScreen component is displayed",
-        "Sound conveys arrival and completion",
-        "Sound complements the celebratory campfire visuals"
+        "Road scene displays after issue overlay is dismissed",
+        "User can click anywhere on the road scene to continue",
+        "Flow correctly transitions from road scene to campfire destination screen"
       ],
       "file_operations": [
         {
-          "path": "frontend/public/assets/sounds/campfire-arrival.mp3",
-          "operation": "create",
-          "description": "Add campfire arrival celebration sound effect audio file (placeholder - actual audio asset to be provided). This sound will play when reaching the final destination, conveying completion and celebration."
+          "path": "frontend/src/hooks/useRVFlow.ts",
+          "operation": "modify",
+          "description": "Add a new flow state 'post-issue-road-to-destination' between 'halt-issue' and 'celebration' states to show road scene after issue resolution"
         },
         {
-          "path": "frontend/src/components/rv/CampfireEndScreen.tsx",
+          "path": "frontend/src/components/rv/RVExperience.tsx",
           "operation": "modify",
-          "description": "Add campfire arrival sound playback using the useSfx hook. Trigger the campfire-arrival.mp3 sound when the component mounts to complement the celebratory visuals and convey journey completion."
+          "description": "Add rendering logic for the new post-issue-road-to-destination state showing TravelScene or AnimatedTravelFallback with ClickToContinueHint overlay, transitioning to celebration state on click"
         }
       ]
     }

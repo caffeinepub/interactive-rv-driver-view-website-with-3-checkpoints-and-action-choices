@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
+import { useSfx } from '../../hooks/useSfx';
 
 interface TravelTransitionProps {
   checkpointNumber: number;
@@ -6,6 +8,12 @@ interface TravelTransitionProps {
 }
 
 export function TravelTransition({ checkpointNumber, isLastCheckpoint }: TravelTransitionProps) {
+  const transitionSfx = useSfx('/assets/sounds/traveling-ambient.mp3', { volume: 0.2 });
+
+  useEffect(() => {
+    transitionSfx.play();
+  }, []);
+
   return (
     <div className="absolute inset-0 z-30 flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-accent/20 animate-fade-in">
       <div className="text-center space-y-6 px-4">

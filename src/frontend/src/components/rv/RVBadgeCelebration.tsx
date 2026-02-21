@@ -1,13 +1,25 @@
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Award, Camera } from 'lucide-react';
+import { useSfx } from '../../hooks/useSfx';
 
 interface RVBadgeCelebrationProps {
   onProceed: () => void;
 }
 
 export function RVBadgeCelebration({ onProceed }: RVBadgeCelebrationProps) {
+  const celebrationSfx = useSfx('/assets/sounds/campfire-arrival.mp3', { volume: 0.5 });
+
+  useEffect(() => {
+    celebrationSfx.play();
+  }, []);
+
+  const handleProceed = () => {
+    onProceed();
+  };
+
   return (
     <div className="absolute inset-0 z-30 flex items-center justify-center p-4 bg-gradient-to-br from-primary/30 via-background/95 to-accent/30 backdrop-blur-md animate-fade-in">
       <Card className="w-full max-w-lg shadow-warm-lg border-2 border-primary/30">
@@ -50,7 +62,7 @@ export function RVBadgeCelebration({ onProceed }: RVBadgeCelebrationProps) {
           </div>
 
           <Button 
-            onClick={onProceed}
+            onClick={handleProceed}
             size="lg"
             className="w-full text-lg font-semibold"
           >

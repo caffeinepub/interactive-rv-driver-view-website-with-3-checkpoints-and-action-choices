@@ -2,12 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-reduce-the-journey-flow-to-include-only-one-break-stop-instead-of-multiple-checkpoints-maintaining-the-existing-traveling-break-stop-continue-pattern",
-      "featureTitle": "Reduce the journey flow to include only one break stop instead of multiple checkpoints, maintaining the existing traveling → break stop → continue pattern",
+      "featureId": "feature-remove-duplicate-sentences-from-the-startjourneyscreen-component-so-each-piece-of-information-appears-only-once",
+      "featureTitle": "Remove duplicate sentences from the StartJourneyScreen component so each piece of information appears only once",
       "files": [
-        "frontend/src/components/rv/ProgressIndicator.tsx",
-        "frontend/src/components/rv/RVExperience.tsx",
-        "frontend/src/hooks/useRVFlow.ts"
+        "frontend/src/components/rv/StartJourneyScreen.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -22,10 +20,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-background-sound-effect-that-plays-during-the-traveling-phase-before-reaching-the-break-point",
-      "featureTitle": "Add background sound effect that plays during the traveling phase before reaching the break point",
+      "featureId": "feature-change-the-road-image-transition-timing-in-animatedtravelfallback-from-the-current-interval-to-20-seconds-per-image",
+      "featureTitle": "Change the road image transition timing in AnimatedTravelFallback from the current interval to 20 seconds per image",
       "files": [
-        "frontend/src/components/rv/RVExperience.tsx"
+        "frontend/src/components/rv/AnimatedTravelFallback.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -40,10 +38,14 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-sound-effect-that-plays-when-the-break-point-is-reached",
-      "featureTitle": "Add sound effect that plays when the break point is reached",
+      "featureId": "feature-add-audio-sound-effects-for-all-interactive-elements-and-transitions-throughout-the-entire-journey-experience-where-audio-is-currently-missing",
+      "featureTitle": "Add audio/sound effects for all interactive elements and transitions throughout the entire journey experience where audio is currently missing",
       "files": [
-        "frontend/src/components/rv/BreakStopReachedOverlay.tsx"
+        "frontend/src/components/rv/ClickToContinueHint.tsx",
+        "frontend/src/components/rv/RVBadgeCelebration.tsx",
+        "frontend/src/components/rv/StartJourneyScreen.tsx",
+        "frontend/src/components/rv/TravelTransition.tsx",
+        "frontend/src/components/rv/TripComplete.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -58,10 +60,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-sound-effect-that-plays-when-the-system-alert-is-triggered-after-the-user-clicks-to-continue-from-the-break-point",
-      "featureTitle": "Add sound effect that plays when the system alert is triggered after the user clicks to continue from the break point",
+      "featureId": "feature-after-the-break-point-arrival-overlay-is-dismissed-show-the-road-traveling-scene-again-with-click-anywhere-interaction-before-proceeding-to-the-halt-issue-part",
+      "featureTitle": "After the break point arrival overlay is dismissed, show the road traveling scene again with click-anywhere interaction before proceeding to the halt issue part",
       "files": [
-        "frontend/src/components/rv/JourneyHaltIssueOverlay.tsx"
+        "frontend/src/components/rv/RVExperience.tsx",
+        "frontend/src/hooks/useRVFlow.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -76,10 +79,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-sound-effect-that-plays-when-reaching-the-final-campfire-destination",
-      "featureTitle": "Add sound effect that plays when reaching the final campfire destination",
+      "featureId": "feature-after-the-halt-issue-quiz-overlay-is-resolved-show-the-road-traveling-scene-again-with-click-anywhere-interaction-before-reaching-the-final-campfire-destination",
+      "featureTitle": "After the halt issue quiz overlay is resolved, show the road traveling scene again with click-anywhere interaction before reaching the final campfire destination",
       "files": [
-        "frontend/src/components/rv/CampfireEndScreen.tsx"
+        "frontend/src/components/rv/RVExperience.tsx",
+        "frontend/src/hooks/useRVFlow.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",

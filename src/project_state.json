@@ -1,49 +1,46 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "App with journey flow featuring a single breakpoint, system alert on user click, and audio enhancements at key moments (traveling, breakpoint, system alert, campfire)",
-  "architectural_notes": [
-    "Journey flow: traveling → breakpoint → user click → system alert → campfire",
-    "Audio integration at multiple journey stages"
-  ],
+  "summary": "New project",
+  "architectural_notes": [],
   "known_issues": [],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-reduce-the-journey-flow-to-include-only-one-break-stop-instead-of-multiple-checkpoints-maintaining-the-existing-traveling-break-stop-continue-pattern",
-      "title": "Reduce the journey flow to include only one break stop instead of multiple checkpoints, maintaining the existing traveling → break stop → continue pattern",
+      "id": "feature-remove-duplicate-sentences-from-the-startjourneyscreen-component-so-each-piece-of-information-appears-only-once",
+      "title": "Remove duplicate sentences from the StartJourneyScreen component so each piece of information appears only once",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-background-sound-effect-that-plays-during-the-traveling-phase-before-reaching-the-break-point",
-      "title": "Add background sound effect that plays during the traveling phase before reaching the break point",
+      "id": "feature-change-the-road-image-transition-timing-in-animatedtravelfallback-from-the-current-interval-to-20-seconds-per-image",
+      "title": "Change the road image transition timing in AnimatedTravelFallback from the current interval to 20 seconds per image",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-sound-effect-that-plays-when-the-break-point-is-reached",
-      "title": "Add sound effect that plays when the break point is reached",
+      "id": "feature-add-audio-sound-effects-for-all-interactive-elements-and-transitions-throughout-the-entire-journey-experience-where-audio-is-currently-missing",
+      "title": "Add audio/sound effects for all interactive elements and transitions throughout the entire journey experience where audio is currently missing",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-sound-effect-that-plays-when-the-system-alert-is-triggered-after-the-user-clicks-to-continue-from-the-break-point",
-      "title": "Add sound effect that plays when the system alert is triggered after the user clicks to continue from the break point",
+      "id": "feature-after-the-break-point-arrival-overlay-is-dismissed-show-the-road-traveling-scene-again-with-click-anywhere-interaction-before-proceeding-to-the-halt-issue-part",
+      "title": "After the break point arrival overlay is dismissed, show the road traveling scene again with click-anywhere interaction before proceeding to the halt issue part",
       "reqIds": [
         "REQ-4"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-sound-effect-that-plays-when-reaching-the-final-campfire-destination",
-      "title": "Add sound effect that plays when reaching the final campfire destination",
+      "id": "feature-after-the-halt-issue-quiz-overlay-is-resolved-show-the-road-traveling-scene-again-with-click-anywhere-interaction-before-reaching-the-final-campfire-destination",
+      "title": "After the halt issue quiz overlay is resolved, show the road traveling scene again with click-anywhere interaction before reaching the final campfire destination",
       "reqIds": [
         "REQ-5"
       ],
@@ -53,18 +50,36 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Single breakpoint in journey flow with click-to-continue",
+      "summary": "Remove duplicate sentences on first page",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Add sound effects at traveling, breakpoint, system alert, and campfire",
+      "summary": "Slow down road image transitions to 20 seconds each",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Add audio for everything",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Show road after breakpoint part with click-anywhere interaction",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Show road after issue part with click-anywhere to reach campfire destination",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "projectName": "RV Journey",
+  "projectName": "Fix duplicate text, slow down road transitions, add comprehensive audio, restore road scenes after breakpoint and issue",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

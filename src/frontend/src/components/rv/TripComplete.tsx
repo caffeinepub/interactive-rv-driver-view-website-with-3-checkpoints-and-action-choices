@@ -1,13 +1,21 @@
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, MapPin, Heart } from 'lucide-react';
+import { useSfx } from '../../hooks/useSfx';
 
 interface TripCompleteProps {
   onRestart: () => void;
 }
 
 export function TripComplete({ onRestart }: TripCompleteProps) {
+  const completeSfx = useSfx('/assets/sounds/campfire-arrival.mp3', { volume: 0.4 });
+
+  useEffect(() => {
+    completeSfx.play();
+  }, []);
+
   const appIdentifier = typeof window !== 'undefined' 
     ? encodeURIComponent(window.location.hostname)
     : 'unknown-app';
