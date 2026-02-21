@@ -1,106 +1,95 @@
 {
   "kind": "build_request",
-  "title": "Fix duplicate text, slow down road transitions, add comprehensive audio, restore road scenes after breakpoint and issue",
+  "title": "Replace road scene images with autoplay videos and add night drive effect",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Remove duplicate sentences from the StartJourneyScreen component so each piece of information appears only once",
+      "text": "Replace all road scene background images in frontend/src/components/rv/scenes.ts with the uploaded video files, ensuring each of the four road journey segments (morning, sunset, evening, night) uses the appropriate uploaded video as its background source",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-last"
+          "msg-1",
+          "msg-7"
         ],
         "quotes": [
-          "in the first page there is duplication of sentences remove that and make it only one"
+          "Replace the existing road scenery in the app",
+          "replace all road scenes with videos"
         ]
       },
       "acceptanceCriteria": [
-        "No text content is repeated on the start journey screen",
-        "All essential information remains present and clear"
+        "All four road journey segments in scenes.ts reference uploaded video files instead of static images",
+        "Video sources are properly configured in the scene data structure",
+        "No static road background images remain in the scene definitions"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Change the road image transition timing in AnimatedTravelFallback from the current interval to 20 seconds per image",
+      "text": "Configure all road scene videos to loop continuously and autoplay when displayed in the TravelVideoScene component",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-last"
+          "msg-9"
         ],
         "quotes": [
-          "Let the road images change a bit slowly make it to 20 sec for each road image change"
+          "the videos need to loop and autoplay where it is used"
         ]
       },
       "acceptanceCriteria": [
-        "Each road scene image displays for exactly 20 seconds before transitioning",
-        "Smooth crossfade transitions remain between images"
+        "Videos start playing automatically when the scene is rendered",
+        "Videos loop seamlessly without user interaction",
+        "Autoplay works across all road journey segments"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Add audio/sound effects for all interactive elements and transitions throughout the entire journey experience where audio is currently missing",
+      "text": "Apply a darkening filter to one of the road scene videos to create a night drive effect, selecting the video based on the story flow progression (likely the evening or night segment)",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-last"
+          "msg-1",
+          "msg-7"
         ],
         "quotes": [
-          "add audio for everything"
+          "make any one of the video bit dark to show night drive",
+          "darken one based on the story flow"
         ]
       },
       "acceptanceCriteria": [
-        "Audio plays at appropriate moments during the journey flow",
-        "Sound effects enhance user interactions without being overwhelming",
-        "All major transitions and screens have accompanying audio"
+        "One road scene video has a darkening overlay or filter applied",
+        "The darkened video is positioned appropriately in the journey progression",
+        "The darkening effect creates a convincing night drive atmosphere"
       ]
     },
     {
       "id": "REQ-4",
-      "text": "After the break point arrival overlay is dismissed, show the road traveling scene again with click-anywhere interaction before proceeding to the halt issue part",
+      "text": "Preserve the existing click behavior on road scene videos so that clicking on the video advances the journey as it currently does with static images",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-last"
+          "msg-9"
         ],
         "quotes": [
-          "after the break point part again road has to be shown clicking anywhere the issue part"
+          "when clicking on it the current app behaviour should be there"
         ]
       },
       "acceptanceCriteria": [
-        "Road scene displays after break point overlay is closed",
-        "User can click anywhere on the road scene to advance",
-        "Flow correctly transitions from road scene to halt issue overlay"
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "After the halt issue quiz overlay is resolved, show the road traveling scene again with click-anywhere interaction before reaching the final campfire destination",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-last"
-        ],
-        "quotes": [
-          "again road has to be shown clicking anywhere reaching destination campfire"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Road scene displays after issue overlay is dismissed",
-        "User can click anywhere on the road scene to continue",
-        "Flow correctly transitions from road scene to campfire destination screen"
+        "Clicking on any road scene video triggers the same advancement logic as before",
+        "Click hint overlay remains visible and functional",
+        "Video playback does not interfere with click event handling"
       ]
     }
   ],
   "constraints": [
     "Do not modify the backend/main.mo file",
-    "Preserve existing sound effects (traveling, break-point-reached, campfire-arrival, thud, alert, issue)",
-    "Maintain the single break stop flow architecture"
+    "Do not change the existing RVExperience flow state machine logic",
+    "Maintain compatibility with the TravelVideoScene component's existing video playback error handling"
   ],
   "nonGoals": [
-    "Changing the number of break stops",
-    "Modifying the halt issue quiz content or logic",
-    "Altering the campfire celebration screen design"
+    "Adding new journey segments or checkpoints",
+    "Changing the overall story flow or progression logic",
+    "Modifying audio behavior or sound effects",
+    "Altering the styling or layout of overlays and UI elements"
   ],
   "imageRequirements": {
     "required": [],

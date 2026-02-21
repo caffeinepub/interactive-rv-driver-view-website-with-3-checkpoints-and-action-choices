@@ -1,211 +1,139 @@
-import { useEffect, useRef, useState } from 'react';
-import { AnimatedTravelFallback } from './AnimatedTravelFallback';
+import { useState, useEffect, useRef } from 'react';
+import { MousePointer2 } from 'lucide-react';
+import { TravelScene } from './TravelScene';
 
 interface TravelVideoSceneProps {
-  onTravelTimeReached?: () => void;
-  onUserAdvance?: () => void;
-  enableTimer?: boolean;
-  travelDuration?: number;
-  segmentKey: string;
+  videoSrc: string;
+  backgroundImage: string;
+  title: string;
+  description: string;
+  isClickable?: boolean;
+  onClick?: () => void;
+  hintText?: string;
+  isDarkened?: boolean;
 }
 
-const PLAYBACK_START_TIMEOUT = 2000; // 2 seconds to start playing
-const MAX_STALL_COUNT = 3;
-
 export function TravelVideoScene({ 
-  onTravelTimeReached,
-  onUserAdvance,
-  enableTimer = false,
-  travelDuration = 60000,
-  segmentKey
+  videoSrc,
+  backgroundImage, 
+  title, 
+  description,
+  isClickable = false,
+  onClick,
+  hintText,
+  isDarkened = false
 }: TravelVideoSceneProps) {
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [videoError, setVideoError] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [hasTriggered, setHasTriggered] = useState(false);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
-  const [useFallback, setUseFallback] = useState(false);
-  const [stallCount, setStallCount] = useState(0);
-  const startTimeRef = useRef<number>(Date.now());
-  const playbackTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const stallTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Reset all state when segment changes
-  useEffect(() => {
-    startTimeRef.current = Date.now();
-    setHasTriggered(false);
-    setIsVideoPlaying(false);
-    setUseFallback(false);
-    setStallCount(0);
-    
-    // Clear any existing timeouts
-    if (playbackTimeoutRef.current) {
-      clearTimeout(playbackTimeoutRef.current);
-      playbackTimeoutRef.current = null;
-    }
-    if (stallTimeoutRef.current) {
-      clearTimeout(stallTimeoutRef.current);
-      stallTimeoutRef.current = null;
-    }
-  }, [segmentKey]);
-
-  // Video playback health monitoring
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || useFallback) return;
+    if (!video) return;
 
-    // Set timeout for initial playback start
-    playbackTimeoutRef.current = setTimeout(() => {
-      if (!isVideoPlaying) {
-        console.warn('Video failed to start playing within timeout, using fallback');
-        setUseFallback(true);
-      }
-    }, PLAYBACK_START_TIMEOUT);
-
-    const handlePlaying = () => {
-      setIsVideoPlaying(true);
-      setStallCount(0);
-      if (playbackTimeoutRef.current) {
-        clearTimeout(playbackTimeoutRef.current);
-        playbackTimeoutRef.current = null;
-      }
-      if (stallTimeoutRef.current) {
-        clearTimeout(stallTimeoutRef.current);
-        stallTimeoutRef.current = null;
-      }
-    };
-
-    const handleWaiting = () => {
-      setIsVideoPlaying(false);
-      // Set a timeout to detect prolonged waiting
-      if (stallTimeoutRef.current) {
-        clearTimeout(stallTimeoutRef.current);
-      }
-      stallTimeoutRef.current = setTimeout(() => {
-        setStallCount(prev => {
-          const newCount = prev + 1;
-          if (newCount >= MAX_STALL_COUNT) {
-            console.warn('Video stalled too many times, using fallback');
-            setUseFallback(true);
-          }
-          return newCount;
-        });
-      }, 2000);
-    };
-
-    const handleStalled = () => {
-      setIsVideoPlaying(false);
-      setStallCount(prev => {
-        const newCount = prev + 1;
-        if (newCount >= MAX_STALL_COUNT) {
-          console.warn('Video stalled, using fallback');
-          setUseFallback(true);
-        }
-        return newCount;
-      });
+    const handleCanPlay = () => {
+      setVideoLoaded(true);
+      setVideoError(false);
     };
 
     const handleError = () => {
-      console.error('Video error, using fallback');
-      setIsVideoPlaying(false);
-      setUseFallback(true);
+      console.warn('Video failed to load, falling back to image');
+      setVideoError(true);
+      setVideoLoaded(false);
     };
 
-    const handlePause = () => {
-      // If video pauses unexpectedly (not user-initiated), it might be autoplay blocked
-      if (!video.ended) {
-        setIsVideoPlaying(false);
+    video.addEventListener('canplay', handleCanPlay);
+    video.addEventListener('error', handleError);
+
+    // Attempt to play with proper error handling
+    const playVideo = async () => {
+      try {
+        await video.play();
+      } catch (error) {
+        console.warn('Video autoplay prevented, will use fallback image');
+        setVideoError(true);
       }
     };
 
-    const handleCanPlay = () => {
-      // Attempt to play when ready
-      video.play().catch((error) => {
-        console.warn('Autoplay blocked or play failed:', error);
-        setUseFallback(true);
-      });
-    };
-
-    video.addEventListener('playing', handlePlaying);
-    video.addEventListener('waiting', handleWaiting);
-    video.addEventListener('stalled', handleStalled);
-    video.addEventListener('error', handleError);
-    video.addEventListener('pause', handlePause);
-    video.addEventListener('canplay', handleCanPlay);
+    playVideo();
 
     return () => {
-      video.removeEventListener('playing', handlePlaying);
-      video.removeEventListener('waiting', handleWaiting);
-      video.removeEventListener('stalled', handleStalled);
-      video.removeEventListener('error', handleError);
-      video.removeEventListener('pause', handlePause);
       video.removeEventListener('canplay', handleCanPlay);
-      
-      if (playbackTimeoutRef.current) {
-        clearTimeout(playbackTimeoutRef.current);
-      }
-      if (stallTimeoutRef.current) {
-        clearTimeout(stallTimeoutRef.current);
-      }
+      video.removeEventListener('error', handleError);
     };
-  }, [useFallback, isVideoPlaying, segmentKey]);
+  }, [videoSrc]);
 
-  // Travel duration timer (only when enabled)
-  useEffect(() => {
-    if (!enableTimer || !onTravelTimeReached) return;
-
-    const checkTravelTime = () => {
-      const elapsed = Date.now() - startTimeRef.current;
-      if (elapsed >= travelDuration && !hasTriggered) {
-        setHasTriggered(true);
-        onTravelTimeReached();
-      }
-    };
-
-    const interval = setInterval(checkTravelTime, 1000);
-
-    return () => clearInterval(interval);
-  }, [onTravelTimeReached, travelDuration, hasTriggered, enableTimer]);
-
-  const handleClick = () => {
-    if (onUserAdvance) {
-      onUserAdvance();
-    }
-  };
+  // Fallback to image-based scene if video fails
+  if (videoError || !videoSrc) {
+    return (
+      <TravelScene
+        backgroundImage={backgroundImage}
+        title={title}
+        description={description}
+        isClickable={isClickable}
+        onClick={onClick}
+        hintText={hintText}
+      />
+    );
+  }
 
   return (
     <div 
-      className="relative w-full h-screen overflow-hidden bg-black cursor-pointer"
-      onClick={handleClick}
+      className={`absolute inset-0 w-full h-full ${isClickable ? 'cursor-pointer' : ''}`}
+      onClick={isClickable ? onClick : undefined}
     >
-      {/* Always render animated fallback as base layer */}
-      <AnimatedTravelFallback className="absolute inset-0" />
-      
-      {/* Video layer on top, only visible when confirmed playing */}
-      {!useFallback && (
-        <video
-          ref={videoRef}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
-          style={{ opacity: isVideoPlaying ? 1 : 0 }}
-        >
-          <source src="/assets/rv-travel-front-view.mp4" type="video/mp4" />
-        </video>
+      {/* Video Background */}
+      <video
+        ref={videoRef}
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        src={videoSrc}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        style={{ opacity: videoLoaded ? 1 : 0, transition: 'opacity 0.5s ease-in-out' }}
+      />
+
+      {/* Fallback image while video loads */}
+      {!videoLoaded && (
+        <div 
+          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${backgroundImage})` }}
+        />
       )}
       
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30 pointer-events-none" />
+      {/* Night darkening overlay */}
+      {isDarkened && (
+        <div className="absolute inset-0 bg-black/50 pointer-events-none" />
+      )}
       
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-center space-y-2 animate-fade-in pointer-events-none">
-        <h2 className="text-3xl font-bold text-white text-shadow-lg">
-          On the Road
-        </h2>
-        {!onUserAdvance && (
+      {/* Gradient Overlay for readability */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/50 pointer-events-none" />
+      
+      {/* Scene Info - Bottom Left */}
+      <div className="absolute bottom-8 left-8 z-10 animate-fade-in pointer-events-none">
+        <div className="bg-black/60 backdrop-blur-md rounded-xl p-6 border border-white/20 shadow-warm-lg max-w-md">
+          <h2 className="text-3xl font-bold text-white mb-2 text-shadow-strong">
+            {title}
+          </h2>
           <p className="text-lg text-white/90 text-shadow">
-            Enjoying the scenic drive...
+            {description}
           </p>
-        )}
+        </div>
       </div>
+
+      {/* Click hint indicator */}
+      {isClickable && (
+        <div className="absolute bottom-8 right-8 z-10 animate-fade-in pointer-events-none">
+          <div className="bg-primary/90 backdrop-blur-md rounded-full px-6 py-3 flex items-center gap-3 shadow-warm-lg border border-primary-foreground/20 animate-pulse">
+            <MousePointer2 className="w-5 h-5 text-primary-foreground" />
+            <span className="text-base font-semibold text-primary-foreground">
+              {hintText || 'Click anywhere to continue'}
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

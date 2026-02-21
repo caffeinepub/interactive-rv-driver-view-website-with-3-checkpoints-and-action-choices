@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, Droplet, Bath, Flame, Gauge } from 'lucide-react';
+import { AlertTriangle, Droplet, Bath, Flame, Gauge, CheckCircle, XCircle } from 'lucide-react';
 import { useSfx } from '@/hooks/useSfx';
 
 interface JourneyHaltIssueOverlayProps {
@@ -11,15 +11,46 @@ type AnswerOption = {
   id: string;
   icon: string;
   label: string;
-  wrongFeedback?: string;
+  feedback: string;
+  isCorrect: boolean;
 };
 
 const options: AnswerOption[] = [
-  { id: 'fuel', icon: '⛽', label: 'Fuel depleted', wrongFeedback: 'Engine running smoothly!' },
-  { id: 'food', icon: '🍲', label: 'Food supplies over', wrongFeedback: 'Snacks still available.' },
-  { id: 'tire', icon: '🛞', label: 'Tire damage', wrongFeedback: 'All tires inflated.' },
-  { id: 'water', icon: '💧', label: 'Resource tank empty' }, // Correct answer
-  { id: 'battery', icon: '🔋', label: 'Battery failure', wrongFeedback: 'Battery fully charged.' },
+  { 
+    id: 'fuel', 
+    icon: '⛽', 
+    label: 'Fuel depleted', 
+    feedback: 'The fuel gauge shows plenty of gas remaining. Engine running smoothly!',
+    isCorrect: false
+  },
+  { 
+    id: 'food', 
+    icon: '🍲', 
+    label: 'Food supplies over', 
+    feedback: 'The pantry is well-stocked. Snacks and meals are still available.',
+    isCorrect: false
+  },
+  { 
+    id: 'tire', 
+    icon: '🛞', 
+    label: 'Tire damage', 
+    feedback: 'All tires are properly inflated and in good condition.',
+    isCorrect: false
+  },
+  { 
+    id: 'water', 
+    icon: '💧', 
+    label: 'Resource tank empty',
+    feedback: 'Correct! The water tank is completely empty. This is causing the RV systems to fail.',
+    isCorrect: true
+  },
+  { 
+    id: 'battery', 
+    icon: '🔋', 
+    label: 'Battery failure', 
+    feedback: 'The battery is fully charged and functioning normally.',
+    isCorrect: false
+  },
 ];
 
 export function JourneyHaltIssueOverlay({ onResolve }: JourneyHaltIssueOverlayProps) {
@@ -29,51 +60,53 @@ export function JourneyHaltIssueOverlay({ onResolve }: JourneyHaltIssueOverlayPr
   const [isLocked, setIsLocked] = useState(false);
 
   // Sound effects
-  const thudSfx = useSfx('/assets/sfx/thud.mp3', { volume: 0.5 });
-  const warningSfx = useSfx('/assets/sfx/warning-beep.mp3', { volume: 0.4 });
   const alertSfx = useSfx('/assets/sounds/system-alert.mp3', { volume: 0.6 });
-  const issueSfx = useSfx('/assets/sfx/post-breakstop-issue.mp3', { volume: 0.5 });
+  const correctSfx = useSfx('/assets/sounds/break-point-reached.mp3', { volume: 0.5 });
+  const wrongSfx = useSfx('/assets/sounds/traveling-ambient.mp3', { volume: 0.2 });
 
-  // Play initial sounds on mount
+  // Play initial alert sound on mount
   useEffect(() => {
-    thudSfx.play();
-    setTimeout(() => alertSfx.play(), 300);
-    setTimeout(() => issueSfx.play(), 600);
+    const timer = setTimeout(() => {
+      alertSfx.play();
+    }, 300);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleAnswerClick = (optionId: string) => {
     if (isLocked) return;
 
-    setSelectedAnswer(optionId);
     const option = options.find(o => o.id === optionId);
+    if (!option) return;
+
+    setSelectedAnswer(optionId);
+    setFeedback(option.feedback);
     
-    if (optionId === 'water') {
+    if (option.isCorrect) {
       // Correct answer
       setIsCorrect(true);
-      setFeedback('');
       setIsLocked(true);
+      correctSfx.play();
       
       // Dramatic pause before resolving
       setTimeout(() => {
         onResolve();
-      }, 2000);
+      }, 2500);
     } else {
       // Wrong answer
-      warningSfx.play();
-      setFeedback(option?.wrongFeedback || 'Try again.');
+      wrongSfx.play();
       setIsCorrect(false);
       
-      // Clear feedback after a moment
+      // Clear selection after showing feedback
       setTimeout(() => {
         setSelectedAnswer(null);
         setFeedback('');
-      }, 2000);
+      }, 3000);
     }
   };
 
   return (
-    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-30 animate-fade-in">
-      <div className="relative w-full max-w-3xl mx-auto p-6">
+    <div className="absolute inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-30 animate-fade-in">
+      <div className="relative w-full max-w-4xl mx-auto p-6">
         {/* Animated visual indicators */}
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
           {/* Steam/drip effect */}
@@ -86,73 +119,87 @@ export function JourneyHaltIssueOverlay({ onResolve }: JourneyHaltIssueOverlayPr
         </div>
 
         {/* Main content card */}
-        <div className="relative bg-gradient-to-br from-destructive/20 via-card to-destructive/10 border-2 border-destructive rounded-xl shadow-2xl p-8 space-y-6">
+        <div className="relative bg-gradient-to-br from-destructive/20 via-card to-destructive/10 border-2 border-destructive rounded-2xl shadow-2xl p-8 space-y-8">
           {/* Header with pulsing alert icon */}
           <div className="flex items-center justify-center gap-4">
-            <AlertTriangle className="w-16 h-16 text-destructive animate-error-pulse" />
+            <AlertTriangle className="w-20 h-20 text-destructive animate-error-pulse" />
             <div className="text-center">
-              <h2 className="text-3xl font-bold text-destructive mb-2">Journey Halted!</h2>
-              <p className="text-lg text-muted-foreground">Critical issue detected</p>
+              <h2 className="text-4xl font-bold text-destructive mb-2">Journey Halted!</h2>
+              <p className="text-xl text-muted-foreground">Critical issue detected</p>
             </div>
           </div>
 
           {/* Visual status indicators */}
           <div className="grid grid-cols-4 gap-4 py-4">
-            <div className="flex flex-col items-center gap-2 p-3 bg-card/50 rounded-lg">
-              <Droplet className="w-8 h-8 text-blue-400 animate-drip" />
-              <span className="text-xs text-muted-foreground">Water</span>
+            <div className="flex flex-col items-center gap-2 p-4 bg-card/60 rounded-xl border border-border/50 hover:bg-card/80 transition-colors">
+              <Droplet className="w-10 h-10 text-blue-400 animate-drip" />
+              <span className="text-sm font-medium text-muted-foreground">Water</span>
             </div>
-            <div className="flex flex-col items-center gap-2 p-3 bg-card/50 rounded-lg">
-              <Gauge className="w-8 h-8 text-green-400" />
-              <span className="text-xs text-muted-foreground">Pressure</span>
+            <div className="flex flex-col items-center gap-2 p-4 bg-card/60 rounded-xl border border-border/50 hover:bg-card/80 transition-colors">
+              <Gauge className="w-10 h-10 text-green-400" />
+              <span className="text-sm font-medium text-muted-foreground">Pressure</span>
             </div>
-            <div className="flex flex-col items-center gap-2 p-3 bg-card/50 rounded-lg">
-              <Flame className="w-8 h-8 text-orange-400 animate-steam-stop" />
-              <span className="text-xs text-muted-foreground">Engine</span>
+            <div className="flex flex-col items-center gap-2 p-4 bg-card/60 rounded-xl border border-border/50 hover:bg-card/80 transition-colors">
+              <Flame className="w-10 h-10 text-orange-400 animate-steam-stop" />
+              <span className="text-sm font-medium text-muted-foreground">Engine</span>
             </div>
-            <div className="flex flex-col items-center gap-2 p-3 bg-card/50 rounded-lg">
-              <Bath className="w-8 h-8 text-cyan-400" />
-              <span className="text-xs text-muted-foreground">Tank</span>
+            <div className="flex flex-col items-center gap-2 p-4 bg-card/60 rounded-xl border border-border/50 hover:bg-card/80 transition-colors">
+              <Bath className="w-10 h-10 text-cyan-400" />
+              <span className="text-sm font-medium text-muted-foreground">Tank</span>
             </div>
           </div>
 
           {/* Question */}
-          <div className="text-center space-y-4">
-            <p className="text-xl font-semibold text-foreground">
+          <div className="text-center space-y-3">
+            <p className="text-2xl font-bold text-foreground">
               What caused the RV to stop?
             </p>
-            <p className="text-sm text-muted-foreground">
-              Select the correct issue to continue
+            <p className="text-base text-muted-foreground">
+              Select the correct issue to continue your journey
             </p>
           </div>
 
           {/* Answer options */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {options.map((option) => {
               const isSelected = selectedAnswer === option.id;
-              const showFeedback = isSelected && feedback;
+              const showAsCorrect = isSelected && option.isCorrect;
+              const showAsWrong = isSelected && !option.isCorrect;
               
               return (
                 <div key={option.id} className="relative">
                   <Button
                     onClick={() => handleAnswerClick(option.id)}
                     disabled={isLocked}
-                    variant={isSelected && isCorrect ? 'default' : 'outline'}
-                    className={`w-full h-auto py-4 px-6 text-left justify-start gap-3 transition-all ${
-                      isSelected && isCorrect 
-                        ? 'bg-primary text-primary-foreground border-primary' 
-                        : isSelected && !isCorrect
-                        ? 'bg-destructive/10 border-destructive'
-                        : 'hover:bg-accent'
-                    } ${isLocked && !isSelected ? 'opacity-50' : ''}`}
+                    variant="outline"
+                    className={`w-full h-auto py-5 px-6 text-left justify-start gap-4 transition-all duration-300 ${
+                      showAsCorrect
+                        ? 'bg-green-500/20 border-green-500 border-2 hover:bg-green-500/30' 
+                        : showAsWrong
+                        ? 'bg-red-500/20 border-red-500 border-2 hover:bg-red-500/30'
+                        : 'hover:bg-accent hover:border-primary/50'
+                    } ${isLocked && !isSelected ? 'opacity-40' : ''}`}
                   >
-                    <span className="text-3xl">{option.icon}</span>
-                    <span className="text-base font-medium">{option.label}</span>
+                    <span className="text-4xl">{option.icon}</span>
+                    <span className="text-lg font-semibold flex-1">{option.label}</span>
+                    {showAsCorrect && (
+                      <CheckCircle className="w-7 h-7 text-green-500 animate-pulse" />
+                    )}
+                    {showAsWrong && (
+                      <XCircle className="w-7 h-7 text-red-500 animate-pulse" />
+                    )}
                   </Button>
                   
-                  {showFeedback && (
-                    <div className="absolute -bottom-8 left-0 right-0 text-center">
-                      <p className="text-sm text-destructive font-medium animate-fade-in">
+                  {/* Feedback text below the button */}
+                  {isSelected && feedback && (
+                    <div className={`mt-3 p-4 rounded-lg border-2 animate-fade-in ${
+                      option.isCorrect 
+                        ? 'bg-green-500/10 border-green-500/50' 
+                        : 'bg-red-500/10 border-red-500/50'
+                    }`}>
+                      <p className={`text-sm font-medium ${
+                        option.isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'
+                      }`}>
                         {feedback}
                       </p>
                     </div>
@@ -165,8 +212,9 @@ export function JourneyHaltIssueOverlay({ onResolve }: JourneyHaltIssueOverlayPr
           {/* Success message */}
           {isCorrect && (
             <div className="text-center py-4 animate-fade-in">
-              <p className="text-lg font-semibold text-primary">
-                ✓ Correct! Resolving issue...
+              <p className="text-xl font-bold text-green-600 dark:text-green-400 flex items-center justify-center gap-2">
+                <CheckCircle className="w-6 h-6" />
+                Excellent! Resolving issue...
               </p>
             </div>
           )}

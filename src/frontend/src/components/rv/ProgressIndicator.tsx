@@ -78,32 +78,32 @@ export function ProgressIndicator({ flowState }: ProgressIndicatorProps) {
 
   return (
     <div className="absolute top-4 left-1/2 -translate-x-1/2 z-40 w-full max-w-md px-4">
-      <div className="bg-card/95 backdrop-blur-md rounded-lg shadow-warm border border-border p-4 space-y-3">
+      <div className="bg-card/95 backdrop-blur-md rounded-xl shadow-warm-lg border-2 border-border p-4 space-y-3 hover:border-primary/50 transition-colors">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {isHalted ? (
-              <AlertTriangle className="w-4 h-4 text-destructive" />
+              <AlertTriangle className="w-5 h-5 text-destructive" />
             ) : (
-              <Navigation className="w-4 h-4 text-primary" />
+              <Navigation className="w-5 h-5 text-primary" />
             )}
-            <span className="text-sm font-semibold text-foreground">
+            <span className="text-sm font-bold text-foreground">
               {getStatusText()}
             </span>
           </div>
-          <Badge variant={isHalted ? "destructive" : "secondary"} className="text-xs">
+          <Badge variant={isHalted ? "destructive" : "secondary"} className="text-xs font-semibold px-3 py-1">
             {isAtBreakStop() ? '1' : '0'}/1
           </Badge>
         </div>
         
-        <Progress value={getProgress()} className="h-2" />
+        <Progress value={getProgress()} className="h-2.5" />
         
-        <div className="flex justify-between items-center text-xs text-muted-foreground">
+        <div className="flex justify-between items-center text-xs text-muted-foreground font-medium">
           <span>Start</span>
           <div className="flex gap-2">
             <div
-              className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold transition-colors ${
+              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
                 isAtBreakStop()
-                  ? 'bg-primary text-primary-foreground'
+                  ? 'bg-primary text-primary-foreground scale-110'
                   : 'bg-muted text-muted-foreground'
               }`}
             >

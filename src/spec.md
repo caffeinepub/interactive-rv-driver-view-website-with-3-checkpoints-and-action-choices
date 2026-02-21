@@ -1,13 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Fix duplicate text on start screen, slow down road scene transitions, add comprehensive audio throughout the journey, and restore road scenes after break point and halt issue overlays.
+**Goal:** Replace road scene background images with autoplay looping videos and add a night drive darkening effect to one video.
 
 **Planned changes:**
-- Remove duplicate sentences from the StartJourneyScreen component
-- Change road image transition timing to 20 seconds per image in AnimatedTravelFallback
-- Add audio/sound effects for all interactive elements and transitions throughout the journey
-- Show road traveling scene with click-anywhere interaction after break point overlay is dismissed
-- Show road traveling scene with click-anywhere interaction after halt issue overlay is resolved
+- Replace all four road journey segment backgrounds in scenes.ts with uploaded video files
+- Configure videos to autoplay and loop continuously
+- Apply darkening filter to one video (evening or night segment) to create night drive atmosphere
+- Preserve existing click-to-advance behavior on video backgrounds
 
-**User-visible outcome:** Users will see a cleaner start screen without duplicate text, experience slower road scene transitions (20 seconds each), hear audio feedback for all interactions and transitions, and see road traveling scenes between break point and halt issue overlays before reaching the final destination.
+**User-visible outcome:** Users will see looping video backgrounds during road journey segments instead of static images, with one segment appearing darker to simulate night driving. Clicking on videos continues to advance the journey as before.
