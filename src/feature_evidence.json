@@ -2,11 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-change-the-post-break-stop-3-halt-issue-so-it-does-not-appear-automatically-after-the-delay-instead-require-an-explicit-user-click-tap-to-show-the-halt-issue-overlay",
-      "featureTitle": "Change the post-break-stop-3 halt issue so it does not appear automatically after the delay; instead, require an explicit user click/tap to show the halt issue overlay.",
+      "featureId": "feature-reduce-the-journey-flow-to-include-only-one-break-stop-instead-of-multiple-checkpoints-maintaining-the-existing-traveling-break-stop-continue-pattern",
+      "featureTitle": "Reduce the journey flow to include only one break stop instead of multiple checkpoints, maintaining the existing traveling → break stop → continue pattern",
       "files": [
-        "frontend/src/components/rv/ClickToContinueHint.tsx",
-        "frontend/src/components/rv/RVExperience.tsx"
+        "frontend/src/components/rv/ProgressIndicator.tsx",
+        "frontend/src/components/rv/RVExperience.tsx",
+        "frontend/src/hooks/useRVFlow.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -21,10 +22,9 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-change-the-campfire-checkpoint-checkpoint-1-destination-so-it-does-not-appear-automatically-on-arrival-instead-require-an-explicit-user-click-tap-to-enter-the-destination-campfire-screen",
-      "featureTitle": "Change the campfire checkpoint (Checkpoint 1 / destination) so it does not appear automatically on arrival; instead, require an explicit user click/tap to enter the destination (campfire) screen.",
+      "featureId": "feature-add-background-sound-effect-that-plays-during-the-traveling-phase-before-reaching-the-break-point",
+      "featureTitle": "Add background sound effect that plays during the traveling phase before reaching the break point",
       "files": [
-        "frontend/src/components/rv/ClickToContinueHint.tsx",
         "frontend/src/components/rv/RVExperience.tsx"
       ],
       "components": [
@@ -36,6 +36,60 @@
       ],
       "testIds": [
         "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-sound-effect-that-plays-when-the-break-point-is-reached",
+      "featureTitle": "Add sound effect that plays when the break point is reached",
+      "files": [
+        "frontend/src/components/rv/BreakStopReachedOverlay.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-sound-effect-that-plays-when-the-system-alert-is-triggered-after-the-user-clicks-to-continue-from-the-break-point",
+      "featureTitle": "Add sound effect that plays when the system alert is triggered after the user clicks to continue from the break point",
+      "files": [
+        "frontend/src/components/rv/JourneyHaltIssueOverlay.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-sound-effect-that-plays-when-reaching-the-final-campfire-destination",
+      "featureTitle": "Add sound effect that plays when reaching the final campfire destination",
+      "files": [
+        "frontend/src/components/rv/CampfireEndScreen.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
       ],
       "confidence": "high"
     }

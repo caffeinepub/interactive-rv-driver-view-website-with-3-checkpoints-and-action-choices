@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Navigation } from 'lucide-react';
+import { MapPin, AlertCircle } from 'lucide-react';
 
 interface StartJourneyScreenProps {
   onStart: () => void;
@@ -8,56 +8,60 @@ interface StartJourneyScreenProps {
 
 export function StartJourneyScreen({ onStart }: StartJourneyScreenProps) {
   return (
-    <div className="relative w-full h-screen flex items-center justify-center p-4 bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 dark:from-amber-950 dark:via-orange-950 dark:to-red-950">
-      <div className="absolute inset-0 bg-[url('/assets/generated/rv-scene-1.dim_1920x1080.png')] bg-cover bg-center opacity-20" />
+    <div className="relative w-full h-screen flex items-center justify-center p-4 bg-gradient-to-br from-background via-primary/5 to-secondary/10">
+      <div className="absolute inset-0 bg-[url('/assets/generated/rv-scene-1.png')] bg-cover bg-center opacity-20" />
       
-      <Card className="relative z-10 w-full max-w-lg shadow-warm-lg border-2 border-primary/20 animate-fade-in">
+      <Card className="relative w-full max-w-2xl shadow-warm-lg border-2 border-primary/20 bg-card/95 backdrop-blur-sm">
         <CardHeader className="text-center space-y-4">
           <div className="flex justify-center">
-            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
-              <Navigation className="w-10 h-10 text-primary" />
+            <div className="text-6xl animate-bounce">
+              🚐
             </div>
           </div>
-          <CardTitle className="text-4xl font-bold text-primary">
-            RV Adventure Awaits
+          
+          <CardTitle className="text-5xl font-bold text-primary">
+            RV Journey Adventure
           </CardTitle>
-          <CardDescription className="text-lg">
-            Embark on a scenic journey through beautiful landscapes. Make stops, explore activities, and create memories along the way.
-          </CardDescription>
-          <p className="text-base font-medium text-foreground/90 pt-2">
+          
+          <CardDescription className="text-xl text-foreground/80">
             You are going on trip in RV. You dont see everything that's happening. Remember your choices!
-          </p>
+          </CardDescription>
         </CardHeader>
         
         <CardContent className="space-y-6">
-          <div className="space-y-3 text-sm text-muted-foreground">
-            <div className="flex items-start gap-3">
-              <span className="text-2xl">🚐</span>
-              <div>
-                <p className="font-semibold text-foreground">Travel in Style</p>
-                <p>Experience the open road from the driver's seat</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <span className="text-2xl">📍</span>
-              <div>
-                <p className="font-semibold text-foreground">3 Break Stops</p>
-                <p>Stop at scenic locations and choose your activities</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <span className="text-2xl">✨</span>
-              <div>
-                <p className="font-semibold text-foreground">Your Journey</p>
-                <p>Make choices that shape your unique adventure</p>
-              </div>
-            </div>
+          <div className="bg-muted/50 rounded-lg p-6 space-y-4">
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-primary" />
+              Journey Overview
+            </h3>
+            
+            <ul className="space-y-3 text-muted-foreground">
+              <li className="flex items-start gap-3">
+                <span className="text-primary font-bold mt-0.5">•</span>
+                <span><strong className="text-foreground">1 Break Stop</strong> along the way</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary font-bold mt-0.5">•</span>
+                <span>Experience the journey from the driver's perspective</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="text-primary font-bold mt-0.5">•</span>
+                <span>Pay attention to what happens during your trip</span>
+              </li>
+            </ul>
+          </div>
+
+          <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-amber-900 dark:text-amber-200">
+              <strong>Remember:</strong> You are going on trip in RV. You dont see everything that's happening. Remember your choices!
+            </p>
           </div>
           
           <Button 
             onClick={onStart}
             size="lg"
-            className="w-full text-lg font-semibold"
+            className="w-full text-xl font-bold py-6"
           >
             Start Journey
           </Button>

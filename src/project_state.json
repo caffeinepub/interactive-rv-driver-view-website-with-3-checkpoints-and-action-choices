@@ -1,31 +1,69 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "New project",
-  "architectural_notes": [],
-  "known_issues": [
-    "Checkpoint1 (campfire) event/issue currently triggers on reaching the checkpoint; it should trigger only when the user clicks (including at checkpoint1)."
+  "summary": "App with journey flow featuring a single breakpoint, system alert on user click, and audio enhancements at key moments (traveling, breakpoint, system alert, campfire)",
+  "architectural_notes": [
+    "Journey flow: traveling → breakpoint → user click → system alert → campfire",
+    "Audio integration at multiple journey stages"
   ],
-  "isFixRequest": true,
+  "known_issues": [],
+  "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-change-the-post-break-stop-3-halt-issue-so-it-does-not-appear-automatically-after-the-delay-instead-require-an-explicit-user-click-tap-to-show-the-halt-issue-overlay",
-      "title": "Change the post-break-stop-3 halt issue so it does not appear automatically after the delay; instead, require an explicit user click/tap to show the halt issue overlay.",
+      "id": "feature-reduce-the-journey-flow-to-include-only-one-break-stop-instead-of-multiple-checkpoints-maintaining-the-existing-traveling-break-stop-continue-pattern",
+      "title": "Reduce the journey flow to include only one break stop instead of multiple checkpoints, maintaining the existing traveling → break stop → continue pattern",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-change-the-campfire-checkpoint-checkpoint-1-destination-so-it-does-not-appear-automatically-on-arrival-instead-require-an-explicit-user-click-tap-to-enter-the-destination-campfire-screen",
-      "title": "Change the campfire checkpoint (Checkpoint 1 / destination) so it does not appear automatically on arrival; instead, require an explicit user click/tap to enter the destination (campfire) screen.",
+      "id": "feature-add-background-sound-effect-that-plays-during-the-traveling-phase-before-reaching-the-break-point",
+      "title": "Add background sound effect that plays during the traveling phase before reaching the break point",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-add-sound-effect-that-plays-when-the-break-point-is-reached",
+      "title": "Add sound effect that plays when the break point is reached",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-sound-effect-that-plays-when-the-system-alert-is-triggered-after-the-user-clicks-to-continue-from-the-break-point",
+      "title": "Add sound effect that plays when the system alert is triggered after the user clicks to continue from the break point",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-sound-effect-that-plays-when-reaching-the-final-campfire-destination",
+      "title": "Add sound effect that plays when reaching the final campfire destination",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
     }
   ],
-  "new_feature_requests": [],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Single breakpoint in journey flow with click-to-continue",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Add sound effects at traveling, breakpoint, system alert, and campfire",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
   "projectName": "RV Journey",
   "clarification_mode": "instant",
   "clarification_rounds": 0

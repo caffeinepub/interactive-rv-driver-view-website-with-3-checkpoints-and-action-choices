@@ -4,8 +4,7 @@ export type FlowState =
   | { type: 'start' }
   | { type: 'traveling'; segment: number }
   | { type: 'break-stop'; breakStopNumber: number }
-  | { type: 'transition'; fromBreakStop: number }
-  | { type: 'post-break-stop-3-delay' }
+  | { type: 'post-break-stop-delay' }
   | { type: 'halt-issue' }
   | { type: 'celebration' }
   | { type: 'traveling-to-destination' }
@@ -30,35 +29,18 @@ export function useRVFlow() {
     setFlowState((prev) => {
       if (prev.type !== 'break-stop') return prev;
       
-      // After break stop 3, go to post-break-stop-3-delay state
-      if (prev.breakStopNumber === 3) {
-        return { type: 'post-break-stop-3-delay' };
-      }
-      
-      return { type: 'transition', fromBreakStop: prev.breakStopNumber };
+      // After the single break stop, go to post-break-stop-delay state
+      return { type: 'post-break-stop-delay' };
     });
   }, []);
 
   const showHaltIssue = useCallback(() => {
     setFlowState((prev) => {
       // Only transition to halt-issue if we're in the delay state
-      if (prev.type === 'post-break-stop-3-delay') {
+      if (prev.type === 'post-break-stop-delay') {
         return { type: 'halt-issue' };
       }
       return prev;
-    });
-  }, []);
-
-  const continueToNextSegment = useCallback(() => {
-    setFlowState((prev) => {
-      if (prev.type !== 'transition') return prev;
-      
-      const nextBreakStop = prev.fromBreakStop + 1;
-      if (nextBreakStop > 3) {
-        return { type: 'complete' };
-      }
-      
-      return { type: 'traveling', segment: nextBreakStop };
     });
   }, []);
 
@@ -88,7 +70,6 @@ export function useRVFlow() {
     startBreakStop,
     continueFromBreakStop,
     showHaltIssue,
-    continueToNextSegment,
     resolveIssue,
     proceedFromCelebration,
     arriveAtDestination,

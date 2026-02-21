@@ -14,7 +14,7 @@ export function BreakStopReachedOverlay({
   breakStopNumber, 
   onContinue 
 }: BreakStopReachedOverlayProps) {
-  const breakStopSfx = useSfx('/assets/sfx/break-stop-reached.mp3', { volume: 0.5 });
+  const breakStopSfx = useSfx('/assets/sounds/break-point-reached.mp3', { volume: 0.5 });
 
   // Play sound effect once on mount
   useEffect(() => {

@@ -1,54 +1,109 @@
 {
   "kind": "build_request",
-  "title": "Trigger halt issue and campfire checkpoint only on user click",
+  "title": "Simplify to single breakpoint and add journey sound effects",
   "projectName": "RV Journey",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Change the post-break-stop-3 halt issue so it does not appear automatically after the delay; instead, require an explicit user click/tap to show the halt issue overlay.",
+      "text": "Reduce the journey flow to include only one break stop instead of multiple checkpoints, maintaining the existing traveling → break stop → continue pattern",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-10"
         ],
         "quotes": [
-          "the issue should come when the user clicks only"
+          "I need only one Break point"
         ]
       },
       "acceptanceCriteria": [
-        "When the flow is in the state currently used to delay after Break Stop 3 (\"post-break-stop-3-delay\"), the app does not automatically transition into the halt issue overlay after any timeout.",
-        "A clear user action (click/tap on the scene and/or a visible button) is required to trigger the transition into the halt issue overlay.",
-        "After the user clicks/taps, the halt issue overlay (quiz) appears and behaves the same as before."
+        "Journey includes exactly one break stop",
+        "Existing BreakStopReachedOverlay component is reused for the single break",
+        "Flow progression remains: traveling → break stop → user click → alert → continue → campfire"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Change the campfire checkpoint (Checkpoint 1 / destination) so it does not appear automatically on arrival; instead, require an explicit user click/tap to enter the destination (campfire) screen.",
+      "text": "Add background sound effect that plays during the traveling phase before reaching the break point",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-10"
         ],
         "quotes": [
-          "reaching the checkpoint1 (campfire) should also come when user clicks."
+          "is it possible to add some sounds while traveling at the break point"
         ]
       },
       "acceptanceCriteria": [
-        "While in the state currently used to travel to the destination (\"traveling-to-destination\"), the app does not automatically transition into the destination state after a timeout.",
-        "A clear user action (click/tap on the scene and/or a visible button) is required to transition into the destination (campfire) screen.",
-        "The campfire destination UI renders only after the user click/tap transition occurs.",
-        "The campfire celebration sound plays when the destination (campfire) screen is entered via the user click/tap transition (not earlier)."
+        "Sound plays automatically when travel scene begins",
+        "Sound loops or plays continuously during travel",
+        "Sound stops when break point is reached"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Add sound effect that plays when the break point is reached",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-10"
+        ],
+        "quotes": [
+          "is it possible to add some sounds while traveling at the break point"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Sound plays when BreakStopReachedOverlay appears",
+        "Sound is distinct from traveling sound",
+        "Existing break stop sound in BreakStopReachedOverlay.tsx can be enhanced or replaced"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Add sound effect that plays when the system alert is triggered after the user clicks to continue from the break point",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-10"
+        ],
+        "quotes": [
+          "system alert"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Sound plays when JourneyHaltIssueOverlay appears after break continue action",
+        "Sound indicates an alert or notification state",
+        "Sound timing aligns with visual alert presentation"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Add sound effect that plays when reaching the final campfire destination",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-10"
+        ],
+        "quotes": [
+          "and finally campfire"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Sound plays when CampfireEndScreen component is displayed",
+        "Sound conveys arrival and completion",
+        "Sound complements the celebratory campfire visuals"
       ]
     }
   ],
   "constraints": [
-    "Frontend files listed as immutable in SYSTEM_CONTEXT must not be edited (compose them instead).",
-    "Keep backend as a single Motoko actor; no backend changes are required for this request."
+    "Do not change the overall flow structure after the break point (system alert and subsequent screens remain the same)",
+    "Reuse existing components (BreakStopReachedOverlay, JourneyHaltIssueOverlay, CampfireEndScreen) without modifying their core structure"
   ],
   "nonGoals": [
-    "Adding new checkpoints, changing the quiz content, or modifying the break-stop overlay copy beyond what is needed to support click-to-continue interaction.",
-    "Implementing real-time/multiplayer behavior or any backend persistence related to checkpoints/issues."
+    "Modifying the visual design or layout of existing overlays",
+    "Changing the quiz or action system in JourneyHaltIssueOverlay",
+    "Altering the campfire celebration animations",
+    "Adding multiple breakpoints or checkpoints"
   ],
   "imageRequirements": {
     "required": [],

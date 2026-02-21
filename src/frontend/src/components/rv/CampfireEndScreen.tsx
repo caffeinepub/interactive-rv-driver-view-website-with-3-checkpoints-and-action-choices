@@ -1,13 +1,22 @@
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Award, Camera, Flame } from 'lucide-react';
+import { useSfx } from '@/hooks/useSfx';
 
 interface CampfireEndScreenProps {
   onContinue: () => void;
 }
 
 export function CampfireEndScreen({ onContinue }: CampfireEndScreenProps) {
+  const campfireSfx = useSfx('/assets/sounds/campfire-arrival.mp3', { volume: 0.6 });
+
+  // Play campfire arrival sound on mount
+  useEffect(() => {
+    campfireSfx.play();
+  }, []);
+
   return (
     <div className="absolute inset-0 z-20 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
       <Card className="w-full max-w-2xl shadow-warm-lg border-2 border-primary/20 bg-gradient-to-br from-card via-card to-primary/5">

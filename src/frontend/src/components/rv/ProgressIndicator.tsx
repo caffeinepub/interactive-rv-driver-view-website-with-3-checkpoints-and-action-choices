@@ -13,13 +13,11 @@ export function ProgressIndicator({ flowState }: ProgressIndicatorProps) {
       case 'start':
         return 'Ready to start';
       case 'traveling':
-        return `Traveling to Break Stop ${flowState.segment}`;
+        return 'Traveling to Break Stop';
       case 'break-stop':
-        return `Break Stop ${flowState.breakStopNumber} of 3`;
-      case 'transition':
-        return flowState.fromBreakStop === 3 ? 'Continuing Journey' : 'Continuing Journey';
-      case 'post-break-stop-3-delay':
-        return 'Break Stop 3 Complete';
+        return 'Break Stop 1 of 1';
+      case 'post-break-stop-delay':
+        return 'Break Stop Complete';
       case 'halt-issue':
         return 'Journey Paused';
       case 'celebration':
@@ -38,19 +36,17 @@ export function ProgressIndicator({ flowState }: ProgressIndicatorProps) {
       case 'start':
         return 0;
       case 'traveling':
-        return ((flowState.segment - 1) / 3) * 100;
+        return 25;
       case 'break-stop':
-        return ((flowState.breakStopNumber - 0.5) / 3) * 100;
-      case 'transition':
-        return (flowState.fromBreakStop / 3) * 100;
-      case 'post-break-stop-3-delay':
-        return 100;
+        return 50;
+      case 'post-break-stop-delay':
+        return 75;
       case 'halt-issue':
-        return 100;
+        return 75;
       case 'celebration':
-        return 100;
+        return 90;
       case 'traveling-to-destination':
-        return 100;
+        return 95;
       case 'destination':
         return 100;
       case 'complete':
@@ -58,29 +54,14 @@ export function ProgressIndicator({ flowState }: ProgressIndicatorProps) {
     }
   };
 
-  const getCurrentBreakStop = (): number => {
-    switch (flowState.type) {
-      case 'start':
-        return 0;
-      case 'traveling':
-        return flowState.segment;
-      case 'break-stop':
-        return flowState.breakStopNumber;
-      case 'transition':
-        return flowState.fromBreakStop;
-      case 'post-break-stop-3-delay':
-        return 3;
-      case 'halt-issue':
-        return 3;
-      case 'celebration':
-        return 3;
-      case 'traveling-to-destination':
-        return 3;
-      case 'destination':
-        return 3;
-      case 'complete':
-        return 3;
-    }
+  const isAtBreakStop = (): boolean => {
+    return flowState.type === 'break-stop' || 
+           flowState.type === 'post-break-stop-delay' ||
+           flowState.type === 'halt-issue' ||
+           flowState.type === 'celebration' ||
+           flowState.type === 'traveling-to-destination' ||
+           flowState.type === 'destination' ||
+           flowState.type === 'complete';
   };
 
   const isHalted = flowState.type === 'halt-issue';
@@ -100,7 +81,7 @@ export function ProgressIndicator({ flowState }: ProgressIndicatorProps) {
             </span>
           </div>
           <Badge variant={isHalted ? "destructive" : "secondary"} className="text-xs">
-            {getCurrentBreakStop()}/3
+            {isAtBreakStop() ? '1' : '0'}/1
           </Badge>
         </div>
         
@@ -109,18 +90,15 @@ export function ProgressIndicator({ flowState }: ProgressIndicatorProps) {
         <div className="flex justify-between items-center text-xs text-muted-foreground">
           <span>Start</span>
           <div className="flex gap-2">
-            {[1, 2, 3].map((num) => (
-              <div
-                key={num}
-                className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold transition-colors ${
-                  getCurrentBreakStop() >= num
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted text-muted-foreground'
-                }`}
-              >
-                {num}
-              </div>
-            ))}
+            <div
+              className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold transition-colors ${
+                isAtBreakStop()
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted text-muted-foreground'
+              }`}
+            >
+              1
+            </div>
           </div>
           <span>End</span>
         </div>

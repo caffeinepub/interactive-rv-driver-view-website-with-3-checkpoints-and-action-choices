@@ -31,7 +31,7 @@ export function JourneyHaltIssueOverlay({ onResolve }: JourneyHaltIssueOverlayPr
   // Sound effects
   const thudSfx = useSfx('/assets/sfx/thud.mp3', { volume: 0.5 });
   const warningSfx = useSfx('/assets/sfx/warning-beep.mp3', { volume: 0.4 });
-  const alertSfx = useSfx('/assets/sfx/system-alert.mp3', { volume: 0.6 });
+  const alertSfx = useSfx('/assets/sounds/system-alert.mp3', { volume: 0.6 });
   const issueSfx = useSfx('/assets/sfx/post-breakstop-issue.mp3', { volume: 0.5 });
 
   // Play initial sounds on mount
@@ -73,103 +73,103 @@ export function JourneyHaltIssueOverlay({ onResolve }: JourneyHaltIssueOverlayPr
 
   return (
     <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-30 animate-fade-in">
-      <div className="w-full max-w-4xl mx-4 space-y-8">
-        {/* Visual Indicators */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {/* Faucet - nothing comes out */}
-          <div className="bg-black/40 rounded-lg p-6 flex flex-col items-center justify-center space-y-3 border border-destructive/30">
-            <Droplet className="w-12 h-12 text-destructive animate-drip" />
-            <div className="text-center">
-              <p className="text-sm text-white/80 font-medium">Water Supply</p>
-              <p className="text-xs text-destructive animate-pulse">Empty</p>
-            </div>
-          </div>
-
-          {/* Bath/Shower - error symbol */}
-          <div className="bg-black/40 rounded-lg p-6 flex flex-col items-center justify-center space-y-3 border border-destructive/30">
-            <div className="relative">
-              <Bath className="w-12 h-12 text-muted-foreground/50" />
-              <AlertTriangle className="w-6 h-6 text-destructive absolute -top-1 -right-1 animate-error-pulse" />
-            </div>
-            <div className="text-center">
-              <p className="text-sm text-white/80 font-medium">Shower</p>
-              <p className="text-xs text-destructive animate-pulse">Error</p>
-            </div>
-          </div>
-
-          {/* Cooking - steam stops */}
-          <div className="bg-black/40 rounded-lg p-6 flex flex-col items-center justify-center space-y-3 border border-destructive/30">
-            <Flame className="w-12 h-12 text-muted-foreground/50 animate-steam-stop" />
-            <div className="text-center">
-              <p className="text-sm text-white/80 font-medium">Cooking</p>
-              <p className="text-xs text-destructive animate-pulse">Offline</p>
-            </div>
-          </div>
-
-          {/* Dashboard warning */}
-          <div className="bg-black/40 rounded-lg p-6 flex flex-col items-center justify-center space-y-3 border border-destructive/30">
-            <Gauge className="w-12 h-12 text-destructive animate-warning-blink" />
-            <div className="text-center">
-              <p className="text-sm text-white/80 font-medium">Dashboard</p>
-              <p className="text-xs text-destructive animate-pulse">Alert</p>
-            </div>
-          </div>
+      <div className="relative w-full max-w-3xl mx-auto p-6">
+        {/* Animated visual indicators */}
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+          {/* Steam/drip effect */}
+          <div className="absolute top-10 left-1/4 w-2 h-8 bg-blue-400/60 rounded-full animate-drip" />
+          <div className="absolute top-16 left-1/3 w-2 h-6 bg-blue-400/40 rounded-full animate-drip" style={{ animationDelay: '0.3s' }} />
+          
+          {/* Warning lights */}
+          <div className="absolute top-8 right-1/4 w-4 h-4 bg-red-500 rounded-full animate-warning-blink" />
+          <div className="absolute top-12 right-1/3 w-3 h-3 bg-amber-500 rounded-full animate-warning-blink" style={{ animationDelay: '0.5s' }} />
         </div>
 
-        {/* System Alert Quiz */}
-        <div className="bg-gradient-to-b from-destructive/20 to-black/60 rounded-xl p-8 border-2 border-destructive/50 shadow-warm-lg animate-slide-up">
-          <div className="text-center space-y-6">
-            <div className="flex items-center justify-center gap-3">
-              <span className="text-4xl animate-warning-blink">🚨</span>
-              <h2 className="text-3xl font-bold text-white text-shadow-lg">SYSTEM ALERT</h2>
-              <span className="text-4xl animate-warning-blink">🚨</span>
+        {/* Main content card */}
+        <div className="relative bg-gradient-to-br from-destructive/20 via-card to-destructive/10 border-2 border-destructive rounded-xl shadow-2xl p-8 space-y-6">
+          {/* Header with pulsing alert icon */}
+          <div className="flex items-center justify-center gap-4">
+            <AlertTriangle className="w-16 h-16 text-destructive animate-error-pulse" />
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-destructive mb-2">Journey Halted!</h2>
+              <p className="text-lg text-muted-foreground">Critical issue detected</p>
             </div>
-            
-            <p className="text-xl text-white/90 text-shadow-md">
-              Trip Interrupted. Select probable cause:
-            </p>
-
-            {/* Answer Options */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-              {options.map((option) => (
-                <Button
-                  key={option.id}
-                  onClick={() => handleAnswerClick(option.id)}
-                  disabled={isLocked}
-                  variant={selectedAnswer === option.id ? (isCorrect ? 'default' : 'destructive') : 'outline'}
-                  size="lg"
-                  className={`h-auto py-4 text-lg font-semibold transition-all ${
-                    selectedAnswer === option.id && isCorrect
-                      ? 'bg-accent text-accent-foreground animate-pulse-slow scale-105'
-                      : ''
-                  } ${
-                    isLocked && option.id !== 'water' ? 'opacity-50' : ''
-                  }`}
-                >
-                  <span className="text-2xl mr-3">{option.icon}</span>
-                  {option.label}
-                </Button>
-              ))}
-            </div>
-
-            {/* Feedback */}
-            {feedback && (
-              <div className="mt-6 p-4 bg-black/60 rounded-lg border border-yellow-500/50 animate-fade-in">
-                <p className="text-yellow-400 text-lg font-medium text-shadow-md">
-                  {feedback}
-                </p>
-              </div>
-            )}
-
-            {/* Correct answer dramatic pause */}
-            {isCorrect && (
-              <div className="mt-6 p-6 bg-accent/20 rounded-lg border-2 border-accent animate-fade-in">
-                <p className="text-accent text-2xl font-bold text-shadow-lg animate-pulse-slow">
-                  Correct! Resolving issue...
-                </p>
-              </div>
-            )}
           </div>
+
+          {/* Visual status indicators */}
+          <div className="grid grid-cols-4 gap-4 py-4">
+            <div className="flex flex-col items-center gap-2 p-3 bg-card/50 rounded-lg">
+              <Droplet className="w-8 h-8 text-blue-400 animate-drip" />
+              <span className="text-xs text-muted-foreground">Water</span>
+            </div>
+            <div className="flex flex-col items-center gap-2 p-3 bg-card/50 rounded-lg">
+              <Gauge className="w-8 h-8 text-green-400" />
+              <span className="text-xs text-muted-foreground">Pressure</span>
+            </div>
+            <div className="flex flex-col items-center gap-2 p-3 bg-card/50 rounded-lg">
+              <Flame className="w-8 h-8 text-orange-400 animate-steam-stop" />
+              <span className="text-xs text-muted-foreground">Engine</span>
+            </div>
+            <div className="flex flex-col items-center gap-2 p-3 bg-card/50 rounded-lg">
+              <Bath className="w-8 h-8 text-cyan-400" />
+              <span className="text-xs text-muted-foreground">Tank</span>
+            </div>
+          </div>
+
+          {/* Question */}
+          <div className="text-center space-y-4">
+            <p className="text-xl font-semibold text-foreground">
+              What caused the RV to stop?
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Select the correct issue to continue
+            </p>
+          </div>
+
+          {/* Answer options */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {options.map((option) => {
+              const isSelected = selectedAnswer === option.id;
+              const showFeedback = isSelected && feedback;
+              
+              return (
+                <div key={option.id} className="relative">
+                  <Button
+                    onClick={() => handleAnswerClick(option.id)}
+                    disabled={isLocked}
+                    variant={isSelected && isCorrect ? 'default' : 'outline'}
+                    className={`w-full h-auto py-4 px-6 text-left justify-start gap-3 transition-all ${
+                      isSelected && isCorrect 
+                        ? 'bg-primary text-primary-foreground border-primary' 
+                        : isSelected && !isCorrect
+                        ? 'bg-destructive/10 border-destructive'
+                        : 'hover:bg-accent'
+                    } ${isLocked && !isSelected ? 'opacity-50' : ''}`}
+                  >
+                    <span className="text-3xl">{option.icon}</span>
+                    <span className="text-base font-medium">{option.label}</span>
+                  </Button>
+                  
+                  {showFeedback && (
+                    <div className="absolute -bottom-8 left-0 right-0 text-center">
+                      <p className="text-sm text-destructive font-medium animate-fade-in">
+                        {feedback}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Success message */}
+          {isCorrect && (
+            <div className="text-center py-4 animate-fade-in">
+              <p className="text-lg font-semibold text-primary">
+                ✓ Correct! Resolving issue...
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

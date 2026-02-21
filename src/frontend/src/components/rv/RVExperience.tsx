@@ -4,7 +4,6 @@ import { StartJourneyScreen } from './StartJourneyScreen';
 import { TravelVideoScene } from './TravelVideoScene';
 import { TravelScene } from './TravelScene';
 import { BreakStopReachedOverlay } from './BreakStopReachedOverlay';
-import { TravelTransition } from './TravelTransition';
 import { TripComplete } from './TripComplete';
 import { ProgressIndicator } from './ProgressIndicator';
 import { JourneyHaltIssueOverlay } from './JourneyHaltIssueOverlay';
@@ -20,7 +19,6 @@ export function RVExperience() {
     startBreakStop, 
     continueFromBreakStop,
     showHaltIssue,
-    continueToNextSegment,
     resolveIssue,
     proceedFromCelebration,
     arriveAtDestination,
@@ -32,8 +30,8 @@ export function RVExperience() {
   const isAdvancingRef = useRef(false);
 
   // Sound effects
-  const travelingSfx = useSfx('/assets/sfx/traveling-loop.mp3', { volume: 0.3, loop: true });
-  const campfireSfx = useSfx('/assets/sfx/campfire-celebration.mp3', { volume: 0.6 });
+  const travelingSfx = useSfx('/assets/sounds/traveling-ambient.mp3', { volume: 0.3, loop: true });
+  const campfireSfx = useSfx('/assets/sounds/campfire-arrival.mp3', { volume: 0.6 });
 
   // Reset advancing guard when leaving traveling state
   useEffect(() => {
@@ -41,17 +39,6 @@ export function RVExperience() {
       isAdvancingRef.current = false;
     }
   }, [flowState.type]);
-
-  // Auto-continue after transition
-  useEffect(() => {
-    if (flowState.type === 'transition') {
-      const timer = setTimeout(() => {
-        continueToNextSegment();
-      }, 2500);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [flowState, continueToNextSegment]);
 
   // Auto-advance through celebration state to traveling-to-destination
   useEffect(() => {
@@ -96,7 +83,7 @@ export function RVExperience() {
         const segmentKey = `traveling-segment-${flowState.segment}`;
         return (
           <TravelVideoScene 
-            onUserAdvance={() => handleUserAdvanceToBreakStop(flowState.segment)}
+            onUserAdvance={() => handleUserAdvanceToBreakStop(1)}
             enableTimer={false}
             segmentKey={segmentKey}
           />
@@ -104,7 +91,7 @@ export function RVExperience() {
       }
       
       case 'break-stop': {
-        const scene = scenes[flowState.breakStopNumber - 1];
+        const scene = scenes[0]; // Always use first scene for the single break stop
         
         return (
           <>
@@ -120,24 +107,14 @@ export function RVExperience() {
           </>
         );
       }
-      
-      case 'transition': {
-        const nextSegment = flowState.fromBreakStop + 1;
-        return (
-          <TravelTransition 
-            checkpointNumber={flowState.fromBreakStop}
-            isLastCheckpoint={nextSegment > 3}
-          />
-        );
-      }
 
-      case 'post-break-stop-3-delay': {
+      case 'post-break-stop-delay': {
         return (
           <>
             <TravelScene 
-              backgroundImage={scenes[2].backgroundImage}
-              title={scenes[2].title}
-              description={scenes[2].description}
+              backgroundImage={scenes[0].backgroundImage}
+              title={scenes[0].title}
+              description={scenes[0].description}
             />
             <ClickToContinueHint 
               onContinue={showHaltIssue}
