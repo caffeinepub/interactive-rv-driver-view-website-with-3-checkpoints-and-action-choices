@@ -1,116 +1,88 @@
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { FlowState } from '../../hooks/useRVFlow';
-import { Navigation, AlertTriangle } from 'lucide-react';
+import { MapPin, Flame } from 'lucide-react';
+import type { FlowState } from '../../hooks/useRVFlow';
 
 interface ProgressIndicatorProps {
   flowState: FlowState;
 }
 
 export function ProgressIndicator({ flowState }: ProgressIndicatorProps) {
-  const getStatusText = (): string => {
-    switch (flowState.type) {
-      case 'start':
-        return 'Ready to start';
-      case 'traveling':
-        return 'Traveling to Break Stop';
-      case 'break-stop':
-        return 'Break Stop 1 of 1';
-      case 'post-break-stop-delay':
-        return 'Break Stop Complete';
-      case 'post-break-road-to-issue':
-        return 'Continuing Journey';
-      case 'halt-issue':
-        return 'Journey Paused';
-      case 'celebration':
-        return 'Badge Earned!';
-      case 'post-issue-road-to-destination':
-        return 'Heading to Campfire';
-      case 'traveling-to-destination':
-        return 'Arriving Soon';
-      case 'destination':
-        return 'Arrived at Campfire';
-      case 'complete':
-        return 'Journey Complete';
-    }
-  };
-
-  const getProgress = (): number => {
+  const getProgress = () => {
     switch (flowState.type) {
       case 'start':
         return 0;
-      case 'traveling':
-        return 25;
-      case 'break-stop':
-        return 50;
-      case 'post-break-stop-delay':
+      case 'traveling_video_1':
+        return 20;
+      case 'at_rest_point':
+        return 40;
+      case 'traveling_video_2':
         return 60;
-      case 'post-break-road-to-issue':
-        return 65;
-      case 'halt-issue':
+      case 'journey_halt_issue':
         return 70;
-      case 'celebration':
-        return 80;
-      case 'post-issue-road-to-destination':
-        return 90;
-      case 'traveling-to-destination':
+      case 'night_road':
+        return 85;
+      case 'destination_arrived':
         return 95;
-      case 'destination':
-        return 100;
       case 'complete':
         return 100;
+      default:
+        return 0;
     }
   };
 
-  const isAtBreakStop = (): boolean => {
-    return flowState.type === 'break-stop' || 
-           flowState.type === 'post-break-stop-delay' ||
-           flowState.type === 'post-break-road-to-issue' ||
-           flowState.type === 'halt-issue' ||
-           flowState.type === 'celebration' ||
-           flowState.type === 'post-issue-road-to-destination' ||
-           flowState.type === 'traveling-to-destination' ||
-           flowState.type === 'destination' ||
-           flowState.type === 'complete';
+  const getStatusText = () => {
+    switch (flowState.type) {
+      case 'traveling_video_1':
+        return 'Traveling to Rest Point';
+      case 'at_rest_point':
+        return 'At Rest Point';
+      case 'traveling_video_2':
+        return 'Continuing Journey';
+      case 'journey_halt_issue':
+        return 'Issue Detected';
+      case 'night_road':
+        return 'Night Road';
+      case 'destination_arrived':
+        return 'Destination Reached';
+      case 'complete':
+        return 'Journey Complete';
+      default:
+        return 'On the Road';
+    }
   };
 
-  const isHalted = flowState.type === 'halt-issue';
+  const progress = getProgress();
+  const statusText = getStatusText();
 
   return (
-    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-40 w-full max-w-md px-4">
-      <div className="bg-card/95 backdrop-blur-md rounded-xl shadow-warm-lg border-2 border-border p-4 space-y-3 hover:border-primary/50 transition-colors">
+    <div className="absolute top-0 left-0 right-0 z-30 bg-gradient-to-b from-black/80 via-black/60 to-transparent p-4 pb-8">
+      <div className="max-w-4xl mx-auto space-y-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {isHalted ? (
-              <AlertTriangle className="w-5 h-5 text-destructive" />
-            ) : (
-              <Navigation className="w-5 h-5 text-primary" />
-            )}
-            <span className="text-sm font-bold text-foreground">
-              {getStatusText()}
+          <div className="flex items-center gap-3">
+            <MapPin className="w-5 h-5 text-primary" />
+            <span className="text-sm font-semibold text-white/90 tracking-wide">
+              {statusText}
             </span>
           </div>
-          <Badge variant={isHalted ? "destructive" : "secondary"} className="text-xs font-semibold px-3 py-1">
-            {isAtBreakStop() ? '1' : '0'}/1
-          </Badge>
+          
+          {flowState.type === 'destination_arrived' && (
+            <Badge variant="default" className="bg-amber-500 hover:bg-amber-600 text-white gap-1.5 px-3 py-1 shadow-lg">
+              <Flame className="w-4 h-4" />
+              <span className="font-semibold">Campfire</span>
+            </Badge>
+          )}
         </div>
         
-        <Progress value={getProgress()} className="h-2.5" />
+        <Progress 
+          value={progress} 
+          className="h-2.5 bg-white/20 shadow-md"
+        />
         
-        <div className="flex justify-between items-center text-xs text-muted-foreground font-medium">
+        <div className="flex justify-between text-xs text-white/70 font-medium">
           <span>Start</span>
-          <div className="flex gap-2">
-            <div
-              className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
-                isAtBreakStop()
-                  ? 'bg-primary text-primary-foreground scale-110'
-                  : 'bg-muted text-muted-foreground'
-              }`}
-            >
-              1
-            </div>
-          </div>
-          <span>End</span>
+          <span>{progress}%</span>
+          <span>Destination</span>
         </div>
       </div>
     </div>

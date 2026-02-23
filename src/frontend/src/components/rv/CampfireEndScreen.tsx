@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Award, Camera, Flame } from 'lucide-react';
 import { useSfx } from '@/hooks/useSfx';
 
@@ -22,17 +21,17 @@ export function CampfireEndScreen({ onContinue }: CampfireEndScreenProps) {
 
   return (
     <div className="absolute inset-0 z-20 flex items-center justify-center p-4 animate-fade-in">
-      {/* Beautiful campfire finale image background */}
+      {/* Campfire destination image as background */}
       <div 
         className="absolute inset-0 bg-cover bg-center"
         style={{ 
-          backgroundImage: 'url(/assets/generated/campfire-finale.dim_1920x1080.png)',
-          filter: 'brightness(0.5) blur(4px)',
+          backgroundImage: 'url(/assets/generated/rv-destination-campfire.dim_1920x1080.png)',
+          filter: 'brightness(0.6)',
         }}
       />
       
       {/* Dark overlay for better card visibility */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
 
       <Card className="relative z-10 w-full max-w-2xl shadow-warm-lg border-2 border-primary/30 bg-gradient-to-br from-card/95 via-card/95 to-primary/10 hover:border-primary/50 transition-colors">
         <CardHeader className="text-center space-y-4 pb-4">
@@ -46,14 +45,11 @@ export function CampfireEndScreen({ onContinue }: CampfireEndScreenProps) {
           </div>
           
           <div className="space-y-2">
-            <Badge variant="secondary" className="text-lg px-6 py-2.5 bg-primary/20 text-primary font-bold border border-primary/30">
-              Checkpoint 1
-            </Badge>
             <CardTitle className="text-5xl font-bold text-primary">
-              Congratulations! 🎉
+              Destination Reached! 🎉
             </CardTitle>
             <CardDescription className="text-xl text-foreground/90 font-medium">
-              You've reached the campfire
+              You have reached your checkpoint one
             </CardDescription>
           </div>
         </CardHeader>

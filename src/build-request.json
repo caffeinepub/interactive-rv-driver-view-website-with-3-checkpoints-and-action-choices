@@ -1,95 +1,111 @@
 {
   "kind": "build_request",
-  "title": "Replace road scene images with autoplay videos and add night drive effect",
-  "priority": "normal",
+  "title": "Restructure journey flow with two videos and campfire ending",
+  "projectName": "RV Journey Experience",
+  "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Replace all road scene background images in frontend/src/components/rv/scenes.ts with the uploaded video files, ensuring each of the four road journey segments (morning, sunset, evening, night) uses the appropriate uploaded video as its background source",
+      "text": "Modify the journey flow to use exactly two videos: the first video plays at journey start and leads to a rest point/break point, the second video plays after continuing from the rest point and leads to the halt issue",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1",
-          "msg-7"
+          "msg-12"
         ],
         "quotes": [
-          "Replace the existing road scenery in the app",
-          "replace all road scenes with videos"
+          "only two videos is to be used one when starting then rest point/break point appears when clicking anywhere and then continuing journey another video appears clicking anywhere issue appears"
         ]
       },
       "acceptanceCriteria": [
-        "All four road journey segments in scenes.ts reference uploaded video files instead of static images",
-        "Video sources are properly configured in the scene data structure",
-        "No static road background images remain in the scene definitions"
+        "First video plays when journey starts",
+        "Clicking anywhere after first video shows rest point/break point",
+        "Second video plays after continuing from rest point",
+        "Clicking anywhere after second video triggers the halt issue overlay"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Configure all road scene videos to loop continuously and autoplay when displayed in the TravelVideoScene component",
+      "text": "After resolving the halt issue, display the night road static image (existing golden hour/night scene), then clicking anywhere shows the destination arrived screen with the campfire image",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-9"
+          "msg-12"
         ],
         "quotes": [
-          "the videos need to loop and autoplay where it is used"
+          "after resolving issue night image appears and clicking anywhere the destination(check point 1) and campfire appears",
+          "the campfire image should be at the end of the app after resolving the issue night road image has to be shown and then clicking anywhere the destination arrived campfire image"
         ]
       },
       "acceptanceCriteria": [
-        "Videos start playing automatically when the scene is rendered",
-        "Videos loop seamlessly without user interaction",
-        "Autoplay works across all road journey segments"
+        "Night road static image displays after issue is resolved",
+        "Night road image is clickable",
+        "Clicking the night road image advances to destination/campfire screen",
+        "Campfire image appears on the final destination screen"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Apply a darkening filter to one of the road scene videos to create a night drive effect, selecting the video based on the story flow progression (likely the evening or night segment)",
+      "text": "Remove any intermediate travel videos or scenes between the rest point and the halt issue to ensure only two videos are used in the entire flow",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1",
-          "msg-7"
+          "msg-12"
         ],
         "quotes": [
-          "make any one of the video bit dark to show night drive",
-          "darken one based on the story flow"
+          "only two videos is to be used"
         ]
       },
       "acceptanceCriteria": [
-        "One road scene video has a darkening overlay or filter applied",
-        "The darkened video is positioned appropriately in the journey progression",
-        "The darkening effect creates a convincing night drive atmosphere"
+        "No additional travel videos play between rest point and issue",
+        "Flow proceeds directly from rest point continue to second video"
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Preserve the existing click behavior on road scene videos so that clicking on the video advances the journey as it currently does with static images",
+      "text": "Update the flow state machine in useRVFlow hook to support the new sequence: start → video 1 → rest point → video 2 → issue → night image → campfire destination → completion",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-9"
-        ],
-        "quotes": [
-          "when clicking on it the current app behaviour should be there"
+          "msg-12"
         ]
       },
       "acceptanceCriteria": [
-        "Clicking on any road scene video triggers the same advancement logic as before",
-        "Click hint overlay remains visible and functional",
-        "Video playback does not interfere with click event handling"
+        "State transitions follow the exact sequence specified",
+        "All intermediate states are properly handled",
+        "Click-to-continue works at each interactive stage"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Ensure the campfire destination screen is the final celebration screen before trip completion, displaying the campfire image from the assets",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-12"
+        ],
+        "quotes": [
+          "the campfire image should be at the end of the app"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Campfire screen displays after clicking the night road image",
+        "Campfire image is visible and properly rendered",
+        "Screen includes appropriate celebration messaging",
+        "Continue button advances to trip completion"
       ]
     }
   ],
   "constraints": [
-    "Do not modify the backend/main.mo file",
-    "Do not change the existing RVExperience flow state machine logic",
-    "Maintain compatibility with the TravelVideoScene component's existing video playback error handling"
+    "Use exactly two videos total in the entire journey flow",
+    "Maintain existing checkpoint data structure and action items",
+    "Preserve existing audio effects and ambient sounds",
+    "Keep existing UI components for overlays and screens where applicable"
   ],
   "nonGoals": [
-    "Adding new journey segments or checkpoints",
-    "Changing the overall story flow or progression logic",
-    "Modifying audio behavior or sound effects",
-    "Altering the styling or layout of overlays and UI elements"
+    "Adding new checkpoints beyond the existing structure",
+    "Changing video content or creating new video files",
+    "Modifying the halt issue quiz questions or answers",
+    "Redesigning the visual theme or color scheme"
   ],
   "imageRequirements": {
     "required": [],

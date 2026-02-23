@@ -2,10 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-replace-all-road-scene-background-images-in-frontend-src-components-rv-scenes-ts-with-the-uploaded-video-files-ensuring-each-of-the-four-road-journey-segments-morning-sunset-evening-night-uses-the-appropriate-uploaded-video-as-its-background-source",
-      "featureTitle": "Replace all road scene background images in frontend/src/components/rv/scenes.ts with the uploaded video files, ensuring each of the four road journey segments (morning, sunset, evening, night) uses the appropriate uploaded video as its background source",
+      "featureId": "feature-modify-the-journey-flow-to-use-exactly-two-videos-the-first-video-plays-at-journey-start-and-leads-to-a-rest-point-break-point-the-second-video-plays-after-continuing-from-the-rest-point-and-leads-to-the-halt-issue",
+      "featureTitle": "Modify the journey flow to use exactly two videos: the first video plays at journey start and leads to a rest point/break point, the second video plays after continuing from the rest point and leads to the halt issue",
       "files": [
-        "frontend/src/components/rv/scenes.ts"
+        "frontend/src/components/rv/RVExperience.tsx",
+        "frontend/src/components/rv/scenes.ts",
+        "frontend/src/hooks/useRVFlow.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -20,10 +22,13 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-configure-all-road-scene-videos-to-loop-continuously-and-autoplay-when-displayed-in-the-travelvideoscene-component",
-      "featureTitle": "Configure all road scene videos to loop continuously and autoplay when displayed in the TravelVideoScene component",
+      "featureId": "feature-after-resolving-the-halt-issue-display-the-night-road-static-image-existing-golden-hour-night-scene-then-clicking-anywhere-shows-the-destination-arrived-screen-with-the-campfire-image",
+      "featureTitle": "After resolving the halt issue, display the night road static image (existing golden hour/night scene), then clicking anywhere shows the destination arrived screen with the campfire image",
       "files": [
-        "frontend/src/components/rv/TravelVideoScene.tsx"
+        "frontend/src/components/rv/CampfireEndScreen.tsx",
+        "frontend/src/components/rv/RVExperience.tsx",
+        "frontend/src/components/rv/scenes.ts",
+        "frontend/src/hooks/useRVFlow.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -38,11 +43,12 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-apply-a-darkening-filter-to-one-of-the-road-scene-videos-to-create-a-night-drive-effect-selecting-the-video-based-on-the-story-flow-progression-likely-the-evening-or-night-segment",
-      "featureTitle": "Apply a darkening filter to one of the road scene videos to create a night drive effect, selecting the video based on the story flow progression (likely the evening or night segment)",
+      "featureId": "feature-remove-any-intermediate-travel-videos-or-scenes-between-the-rest-point-and-the-halt-issue-to-ensure-only-two-videos-are-used-in-the-entire-flow",
+      "featureTitle": "Remove any intermediate travel videos or scenes between the rest point and the halt issue to ensure only two videos are used in the entire flow",
       "files": [
-        "frontend/src/components/rv/TravelVideoScene.tsx",
-        "frontend/src/components/rv/scenes.ts"
+        "frontend/src/components/rv/RVExperience.tsx",
+        "frontend/src/components/rv/scenes.ts",
+        "frontend/src/hooks/useRVFlow.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -57,10 +63,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-preserve-the-existing-click-behavior-on-road-scene-videos-so-that-clicking-on-the-video-advances-the-journey-as-it-currently-does-with-static-images",
-      "featureTitle": "Preserve the existing click behavior on road scene videos so that clicking on the video advances the journey as it currently does with static images",
+      "featureId": "feature-update-the-flow-state-machine-in-uservflow-hook-to-support-the-new-sequence-start-video-1-rest-point-video-2-issue-night-image-campfire-destination-completion",
+      "featureTitle": "Update the flow state machine in useRVFlow hook to support the new sequence: start → video 1 → rest point → video 2 → issue → night image → campfire destination → completion",
       "files": [
-        "frontend/src/components/rv/TravelVideoScene.tsx"
+        "frontend/src/components/rv/RVExperience.tsx",
+        "frontend/src/hooks/useRVFlow.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -71,6 +78,26 @@
       ],
       "testIds": [
         "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-ensure-the-campfire-destination-screen-is-the-final-celebration-screen-before-trip-completion-displaying-the-campfire-image-from-the-assets",
+      "featureTitle": "Ensure the campfire destination screen is the final celebration screen before trip completion, displaying the campfire image from the assets",
+      "files": [
+        "frontend/src/components/rv/CampfireEndScreen.tsx",
+        "frontend/src/components/rv/RVExperience.tsx",
+        "frontend/src/hooks/useRVFlow.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
       ],
       "confidence": "high"
     }

@@ -2,58 +2,39 @@ import { useState, useCallback } from 'react';
 
 export type FlowState = 
   | { type: 'start' }
-  | { type: 'traveling'; segment: number }
-  | { type: 'break-stop'; breakStopNumber: number }
-  | { type: 'post-break-stop-delay' }
-  | { type: 'post-break-road-to-issue' }
-  | { type: 'halt-issue' }
-  | { type: 'post-issue-road-to-destination' }
-  | { type: 'celebration' }
-  | { type: 'traveling-to-destination' }
-  | { type: 'destination' }
+  | { type: 'traveling_video_1' }
+  | { type: 'at_rest_point' }
+  | { type: 'traveling_video_2' }
+  | { type: 'journey_halt_issue' }
+  | { type: 'night_road' }
+  | { type: 'destination_arrived' }
   | { type: 'complete' };
 
 export function useRVFlow() {
   const [flowState, setFlowState] = useState<FlowState>({ type: 'start' });
 
   const startJourney = useCallback(() => {
-    setFlowState({ type: 'traveling', segment: 1 });
+    setFlowState({ type: 'traveling_video_1' });
   }, []);
 
-  const startBreakStop = useCallback((breakStopNumber: number) => {
-    setFlowState({ 
-      type: 'break-stop', 
-      breakStopNumber
-    });
+  const advanceToRestPoint = useCallback(() => {
+    setFlowState({ type: 'at_rest_point' });
   }, []);
 
-  const continueFromBreakStop = useCallback(() => {
-    setFlowState((prev) => {
-      if (prev.type !== 'break-stop') return prev;
-      
-      // After the single break stop, go to post-break-stop-delay state
-      return { type: 'post-break-stop-delay' };
-    });
-  }, []);
-
-  const showPostBreakRoad = useCallback(() => {
-    setFlowState({ type: 'post-break-road-to-issue' });
+  const continueFromRestPoint = useCallback(() => {
+    setFlowState({ type: 'traveling_video_2' });
   }, []);
 
   const showHaltIssue = useCallback(() => {
-    setFlowState({ type: 'halt-issue' });
+    setFlowState({ type: 'journey_halt_issue' });
   }, []);
 
   const resolveIssue = useCallback(() => {
-    setFlowState({ type: 'celebration' });
+    setFlowState({ type: 'night_road' });
   }, []);
 
-  const proceedFromCelebration = useCallback(() => {
-    setFlowState({ type: 'post-issue-road-to-destination' });
-  }, []);
-
-  const arriveAtDestination = useCallback(() => {
-    setFlowState({ type: 'destination' });
+  const viewNightRoad = useCallback(() => {
+    setFlowState({ type: 'destination_arrived' });
   }, []);
 
   const completeJourney = useCallback(() => {
@@ -67,13 +48,11 @@ export function useRVFlow() {
   return {
     flowState,
     startJourney,
-    startBreakStop,
-    continueFromBreakStop,
-    showPostBreakRoad,
+    advanceToRestPoint,
+    continueFromRestPoint,
     showHaltIssue,
     resolveIssue,
-    proceedFromCelebration,
-    arriveAtDestination,
+    viewNightRoad,
     completeJourney,
     restart
   };

@@ -1,74 +1,137 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Replace road scene images with autoplay videos and add night drive effect",
+  "title": "Restructure journey flow with two videos and campfire ending",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Replace all road scene background images with uploaded video files for the four journey segments",
+      "summary": "Modify the journey flow to use exactly two videos: first video at journey start leading to rest point, second video after rest point leading to halt issue",
       "acceptanceCriteria": [
-        "All four road journey segments in scenes.ts reference uploaded video files instead of static images",
-        "Video sources are properly configured in the scene data structure",
-        "No static road background images remain in the scene definitions"
+        "First video plays when journey starts",
+        "Clicking anywhere after first video shows rest point/break point",
+        "Second video plays after continuing from rest point",
+        "Clicking anywhere after second video triggers the halt issue overlay"
       ],
       "file_operations": [
         {
+          "path": "frontend/src/hooks/useRVFlow.ts",
+          "operation": "modify",
+          "description": "Update the flow state machine to support the new two-video sequence: remove 'traveling' state for additional travel segments, ensure state transitions go from 'start' → video 1 (traveling_to_break_1) → 'at_break_1' → video 2 (traveling_from_break_1) → 'journey_halt_issue'. Remove any intermediate travel states that would trigger additional video playback between rest point and issue."
+        },
+        {
+          "path": "frontend/src/components/rv/RVExperience.tsx",
+          "operation": "modify",
+          "description": "Update the main orchestrator to render only two travel video scenes in the entire flow: one TravelVideoScene for the initial journey (when state is traveling to first break), and one TravelVideoScene after continuing from the rest point (when state is traveling from break to issue). Remove any logic that would render additional travel videos or scenes between rest point and halt issue. Ensure click-to-continue advances from video 1 to rest point overlay, and from video 2 to halt issue overlay."
+        },
+        {
           "path": "frontend/src/components/rv/scenes.ts",
           "operation": "modify",
-          "description": "Replace the videoSrc values for roadScenes array entries (morning, sunset, evening, night) with paths to the uploaded video files. Map morning segment to mixkit-traveling-on-the-highway-on-a-sunny-day-42368-hd-ready.mp4, sunset to mixkit-52453-video-52453-hd-ready.mp4, evening to mixkit-52427-video-52427-hd-ready.mp4, and night to an appropriate darkened video. Update the backgroundImage fallback paths if needed to match the video theme."
+          "description": "Configure scene data to provide exactly two video scenes for the journey flow. Designate one video file (e.g., mixkit-traveling-on-the-highway-on-a-sunny-day-42368-hd-ready.mp4) for the initial journey to rest point, and a second video file (e.g., mixkit-52453-video-52453-hd-ready.mp4) for the journey from rest point to halt issue. Remove or comment out references to additional travel scenes that would play between these two segments."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Configure road scene videos to loop continuously and autoplay when displayed",
+      "summary": "After resolving the halt issue, display the night road static image, then clicking anywhere shows the destination arrived screen with the campfire image",
       "acceptanceCriteria": [
-        "Videos start playing automatically when the scene is rendered",
-        "Videos loop seamlessly without user interaction",
-        "Autoplay works across all road journey segments"
+        "Night road static image displays after issue is resolved",
+        "Night road image is clickable",
+        "Clicking the night road image advances to destination/campfire screen",
+        "Campfire image appears on the final destination screen"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/rv/TravelVideoScene.tsx",
+          "path": "frontend/src/hooks/useRVFlow.ts",
           "operation": "modify",
-          "description": "Add autoPlay and loop attributes to the video element to enable continuous looping playback. Ensure muted attribute is present to allow autoplay to work across browsers. Verify these attributes work with the existing video error handling and fallback logic."
+          "description": "Add a new state 'night_road' that follows 'journey_halt_issue' after issue resolution. Update state transitions so that resolving the halt issue advances to 'night_road', and interacting with the night road scene advances to 'destination_arrived' (campfire screen). Ensure proper state progression: issue → night_road → destination_arrived → celebration → completion."
+        },
+        {
+          "path": "frontend/src/components/rv/RVExperience.tsx",
+          "operation": "modify",
+          "description": "Add rendering logic for the 'night_road' state to display a TravelScene component with the night road static image (frontend/public/assets/generated/road-night.dim_1920x1080.png). Make this scene clickable so that clicking advances to the 'destination_arrived' state. Position this scene in the flow after the JourneyHaltIssueOverlay is resolved and before the campfire destination screen."
+        },
+        {
+          "path": "frontend/src/components/rv/scenes.ts",
+          "operation": "modify",
+          "description": "Add or update scene data for the night road static image scene. Ensure the nightRoadScene object references the correct asset path (frontend/public/assets/generated/road-night.dim_1920x1080.png) and includes appropriate title and description (e.g., 'Night Road' and 'The journey continues under the stars'). Mark this as a clickable scene."
+        },
+        {
+          "path": "frontend/src/components/rv/CampfireEndScreen.tsx",
+          "operation": "modify",
+          "description": "Update the CampfireEndScreen component to ensure it displays the campfire destination image (frontend/public/assets/generated/rv-destination-campfire.dim_1920x1080.png) as the background or main visual. Verify the component renders as the final celebration screen before trip completion, with appropriate messaging about reaching the destination and the campfire. Ensure the continue button advances to trip completion."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Apply darkening filter to one road scene video to create night drive effect",
+      "summary": "Remove any intermediate travel videos or scenes between the rest point and the halt issue to ensure only two videos are used in the entire flow",
       "acceptanceCriteria": [
-        "One road scene video has a darkening overlay or filter applied",
-        "The darkened video is positioned appropriately in the journey progression",
-        "The darkening effect creates a convincing night drive atmosphere"
+        "No additional travel videos play between rest point and issue",
+        "Flow proceeds directly from rest point continue to second video"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/rv/TravelVideoScene.tsx",
+          "path": "frontend/src/hooks/useRVFlow.ts",
           "operation": "modify",
-          "description": "Add conditional rendering logic to apply a dark overlay (using absolute positioned div with semi-transparent black background or CSS filter) when the scene is identified as the night segment. Use scene title or index to determine which video should receive the darkening effect. The overlay should be positioned above the video but below the text content overlay."
+          "description": "Remove any state definitions or transitions that would cause additional travel video playback between the rest point and the halt issue. Ensure that after leaving 'at_break_1' state, the flow goes directly to the second video state (traveling to issue) without intermediate 'traveling' or additional checkpoint states. Simplify the state machine to support only: start → video1 → rest point → video2 → issue."
+        },
+        {
+          "path": "frontend/src/components/rv/RVExperience.tsx",
+          "operation": "modify",
+          "description": "Remove or disable any conditional rendering logic that would display additional TravelVideoScene or TravelScene components between the rest point continue action and the halt issue overlay. Ensure only two TravelVideoScene components are rendered in the entire flow lifecycle. Verify no additional travel segments or checkpoint sequences are triggered."
         },
         {
           "path": "frontend/src/components/rv/scenes.ts",
           "operation": "modify",
-          "description": "Add an optional property to the RoadScene type definition to mark which scene should have the night drive darkening effect applied. Set this flag on the appropriate scene entry (likely the evening or night segment based on story progression) to enable the darkening filter in TravelVideoScene."
+          "description": "Remove or comment out any scene definitions beyond the two required video scenes. Ensure the scenes array or object only exports data for the initial journey video and the rest-point-to-issue video, plus the special halt-issue and campfire-destination static scenes. Remove references to additional checkpoints, scenic overlooks, or campground travel segments."
         }
       ]
     },
     {
       "id": "REQ-4",
-      "summary": "Preserve existing click behavior on road scene videos for journey advancement",
+      "summary": "Update the flow state machine in useRVFlow hook to support the new sequence: start → video 1 → rest point → video 2 → issue → night image → campfire destination → completion",
       "acceptanceCriteria": [
-        "Clicking on any road scene video triggers the same advancement logic as before",
-        "Click hint overlay remains visible and functional",
-        "Video playback does not interfere with click event handling"
+        "State transitions follow the exact sequence specified",
+        "All intermediate states are properly handled",
+        "Click-to-continue works at each interactive stage"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/rv/TravelVideoScene.tsx",
+          "path": "frontend/src/hooks/useRVFlow.ts",
           "operation": "modify",
-          "description": "Verify that the existing onClick handler on the container div continues to work with video elements. Ensure the video element does not have pointer-events that would block clicks, or add pointer-events-none class to the video if needed. Confirm ClickToContinueHint remains visible and the click interaction advances the journey as expected."
+          "description": "Rewrite the state machine to implement the exact sequence: 'start' → 'traveling_video_1' → 'at_rest_point' → 'traveling_video_2' → 'journey_halt_issue' → 'night_road' → 'destination_arrived' (campfire) → 'celebration' → 'completion'. Define clear state types and transition functions (advanceToRestPoint, continueFromRestPoint, resolveIssue, viewNightRoad, reachDestination, continueToCelebration, completeTrip). Ensure each state properly handles user interactions (clicks, button presses) to advance to the next state."
+        },
+        {
+          "path": "frontend/src/components/rv/RVExperience.tsx",
+          "operation": "modify",
+          "description": "Update the main render logic to map each state in the new sequence to the appropriate component: 'start' → StartJourneyScreen, 'traveling_video_1' → TravelVideoScene (first video, click to advance), 'at_rest_point' → BreakStopReachedOverlay (continue button), 'traveling_video_2' → TravelVideoScene (second video, click to advance), 'journey_halt_issue' → JourneyHaltIssueOverlay (quiz completion advances), 'night_road' → TravelScene (static night image, clickable), 'destination_arrived' → CampfireEndScreen, 'celebration' → RVBadgeCelebration, 'completion' → TripComplete. Verify all transitions are properly wired and click-to-continue works at each interactive stage."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Ensure the campfire destination screen is the final celebration screen before trip completion, displaying the campfire image from the assets",
+      "acceptanceCriteria": [
+        "Campfire screen displays after clicking the night road image",
+        "Campfire image is visible and properly rendered",
+        "Screen includes appropriate celebration messaging",
+        "Continue button advances to trip completion"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/rv/CampfireEndScreen.tsx",
+          "operation": "modify",
+          "description": "Ensure the component uses the campfire destination image (frontend/public/assets/generated/rv-destination-campfire.dim_1920x1080.png) as the primary visual. Verify the background image is properly styled with background-size: cover and background-position: center. Include celebration messaging such as 'Destination Reached!' or 'Welcome to the Campfire!'. Ensure the continue button triggers the campfire arrival sound effect and advances the flow to the next state (celebration or completion). Verify the component is visually distinct as the final destination screen."
+        },
+        {
+          "path": "frontend/src/hooks/useRVFlow.ts",
+          "operation": "modify",
+          "description": "Ensure the 'destination_arrived' state (campfire screen) is positioned immediately after the 'night_road' state and before the final 'celebration' or 'completion' states. Verify the transition from 'night_road' to 'destination_arrived' is triggered by clicking the night road image, and the transition from 'destination_arrived' to the next state is triggered by the continue button on the campfire screen."
+        },
+        {
+          "path": "frontend/src/components/rv/RVExperience.tsx",
+          "operation": "modify",
+          "description": "Wire the CampfireEndScreen component to render when the flow state is 'destination_arrived'. Pass the appropriate advance function from useRVFlow as the onContinue prop so the continue button progresses the flow. Ensure the campfire screen appears after the night road scene is clicked and before the final badge celebration or trip completion screens."
         }
       ]
     }

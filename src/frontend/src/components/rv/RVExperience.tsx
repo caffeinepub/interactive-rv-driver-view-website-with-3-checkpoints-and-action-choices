@@ -8,59 +8,33 @@ import { TripComplete } from './TripComplete';
 import { ProgressIndicator } from './ProgressIndicator';
 import { JourneyHaltIssueOverlay } from './JourneyHaltIssueOverlay';
 import { CampfireEndScreen } from './CampfireEndScreen';
-import { scenes, haltIssueScene, campfireDestinationScene } from './scenes';
+import { video1Scene, video2Scene, haltIssueScene, nightRoadScene, campfireDestinationScene } from './scenes';
 import { useSfx } from '../../hooks/useSfx';
 
 export function RVExperience() {
   const { 
     flowState, 
     startJourney,
-    startBreakStop, 
-    continueFromBreakStop,
-    showPostBreakRoad,
+    advanceToRestPoint,
+    continueFromRestPoint,
     showHaltIssue,
     resolveIssue,
-    proceedFromCelebration,
-    arriveAtDestination,
+    viewNightRoad,
     completeJourney,
     restart 
   } = useRVFlow();
 
-  // Guard to prevent duplicate break stop triggers during traveling
+  // Guard to prevent duplicate triggers
   const isAdvancingRef = useRef(false);
 
   // Sound effects with correct paths
   const backgroundAmbientSfx = useSfx('/assets/sounds/traveling-ambient.mp3', { volume: 0.3, loop: true });
   const travelTransitionSfx = useSfx('/assets/sounds/traveling-ambient.mp3', { volume: 0.5 });
 
-  // Reset advancing guard when leaving traveling state
+  // Reset advancing guard when state changes
   useEffect(() => {
-    if (flowState.type !== 'traveling') {
-      isAdvancingRef.current = false;
-    }
+    isAdvancingRef.current = false;
   }, [flowState.type]);
-
-  // Auto-advance through post-break-stop-delay to post-break-road-to-issue
-  useEffect(() => {
-    if (flowState.type === 'post-break-stop-delay') {
-      const timer = setTimeout(() => {
-        showPostBreakRoad();
-      }, 100);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [flowState, showPostBreakRoad]);
-
-  // Auto-advance through celebration state to post-issue-road-to-destination
-  useEffect(() => {
-    if (flowState.type === 'celebration') {
-      const timer = setTimeout(() => {
-        proceedFromCelebration();
-      }, 100);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [flowState, proceedFromCelebration]);
 
   // Handle background ambient audio - plays throughout entire journey
   useEffect(() => {
@@ -77,7 +51,7 @@ export function RVExperience() {
 
   // Play travel transition sound when entering traveling states
   useEffect(() => {
-    if (flowState.type === 'traveling' || flowState.type === 'post-break-road-to-issue' || flowState.type === 'post-issue-road-to-destination') {
+    if (flowState.type === 'traveling_video_1' || flowState.type === 'traveling_video_2') {
       const timer = setTimeout(() => {
         travelTransitionSfx.play();
       }, 200);
@@ -85,38 +59,22 @@ export function RVExperience() {
     }
   }, [flowState.type]);
 
-  const handleUserAdvanceToBreakStop = () => {
+  const handleUserAdvanceToRestPoint = () => {
     if (isAdvancingRef.current) return;
     isAdvancingRef.current = true;
-    startBreakStop(1);
+    advanceToRestPoint();
   };
 
-  const renderTravelScene = (scene: typeof scenes[0], isClickable: boolean, onClick?: () => void, hintText?: string) => {
-    if (scene.videoSrc) {
-      return (
-        <TravelVideoScene
-          videoSrc={scene.videoSrc}
-          backgroundImage={scene.backgroundImage}
-          title={scene.title}
-          description={scene.description}
-          isClickable={isClickable}
-          onClick={onClick}
-          hintText={hintText}
-          isDarkened={scene.isDarkened}
-        />
-      );
-    }
-    
-    return (
-      <TravelScene 
-        backgroundImage={scene.backgroundImage}
-        title={scene.title}
-        description={scene.description}
-        isClickable={isClickable}
-        onClick={onClick}
-        hintText={hintText}
-      />
-    );
+  const handleUserAdvanceToIssue = () => {
+    if (isAdvancingRef.current) return;
+    isAdvancingRef.current = true;
+    showHaltIssue();
+  };
+
+  const handleUserViewNightRoad = () => {
+    if (isAdvancingRef.current) return;
+    isAdvancingRef.current = true;
+    viewNightRoad();
   };
 
   const renderContent = () => {
@@ -125,35 +83,51 @@ export function RVExperience() {
         return <StartJourneyScreen onStart={startJourney} />;
       }
 
-      case 'traveling': {
-        const scene = scenes[0]; // Morning scene for initial travel
-        return renderTravelScene(scene, true, handleUserAdvanceToBreakStop);
+      case 'traveling_video_1': {
+        return (
+          <TravelVideoScene
+            videoSrc={video1Scene.videoSrc!}
+            backgroundImage={video1Scene.backgroundImage}
+            title={video1Scene.title}
+            description={video1Scene.description}
+            isClickable={true}
+            onClick={handleUserAdvanceToRestPoint}
+            hintText="Click anywhere to continue"
+          />
+        );
       }
       
-      case 'break-stop': {
-        const scene = scenes[0];
-        
+      case 'at_rest_point': {
         return (
           <>
-            {renderTravelScene(scene, false)}
+            <TravelScene 
+              backgroundImage={video1Scene.backgroundImage}
+              title={video1Scene.title}
+              description={video1Scene.description}
+            />
             <BreakStopReachedOverlay
-              breakStopNumber={flowState.breakStopNumber}
-              onContinue={continueFromBreakStop}
+              breakStopNumber={1}
+              onContinue={continueFromRestPoint}
             />
           </>
         );
       }
 
-      case 'post-break-stop-delay': {
-        return renderTravelScene(scenes[0], false);
+      case 'traveling_video_2': {
+        return (
+          <TravelVideoScene
+            videoSrc={video2Scene.videoSrc!}
+            backgroundImage={video2Scene.backgroundImage}
+            title={video2Scene.title}
+            description={video2Scene.description}
+            isClickable={true}
+            onClick={handleUserAdvanceToIssue}
+            hintText="Click anywhere to continue"
+          />
+        );
       }
 
-      case 'post-break-road-to-issue': {
-        const scene = scenes[1]; // Sunset scene for post-break travel
-        return renderTravelScene(scene, true, showHaltIssue, "Click anywhere to continue");
-      }
-
-      case 'halt-issue': {
+      case 'journey_halt_issue': {
         return (
           <>
             <TravelScene 
@@ -166,34 +140,20 @@ export function RVExperience() {
         );
       }
 
-      case 'celebration': {
+      case 'night_road': {
         return (
           <TravelScene 
-            backgroundImage={haltIssueScene.backgroundImage}
-            title={haltIssueScene.title}
-            description={haltIssueScene.description}
+            backgroundImage={nightRoadScene.backgroundImage}
+            title={nightRoadScene.title}
+            description={nightRoadScene.description}
+            isClickable={true}
+            onClick={handleUserViewNightRoad}
+            hintText="Click anywhere to arrive at destination"
           />
         );
       }
 
-      case 'post-issue-road-to-destination': {
-        const scene = scenes[3]; // Night scene for final approach
-        return renderTravelScene(scene, true, arriveAtDestination, "Click anywhere to arrive at campfire");
-      }
-
-      case 'traveling-to-destination': {
-        return (
-          <>
-            <TravelScene 
-              backgroundImage={campfireDestinationScene.backgroundImage}
-              title="Arriving at Destination"
-              description="Your campfire awaits..."
-            />
-          </>
-        );
-      }
-
-      case 'destination': {
+      case 'destination_arrived': {
         return (
           <>
             <TravelScene 
